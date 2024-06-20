@@ -9,14 +9,22 @@ async def run_consumer():
     await runner.run()
 
 
-if __name__ == "__main__":
-    run_type = sys.argv[1]
+def run_by_command(argv: list[str], runners: dict) -> None:
+    if not argv:
+        return
 
-    run_types = {
-        "consumer": run_consumer
-    }
-
-    coroutine = run_types.get(run_type)
+    coroutine = runners.get(argv[1])
 
     if coroutine:
         asyncio.run(coroutine())
+
+
+if __name__ == "__main__":
+    run_by_command(
+        argv=sys.argv,
+        runners={
+            "consumer": run_consumer
+        }
+    )
+
+
