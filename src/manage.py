@@ -10,10 +10,10 @@ async def run_consumer():
 
 
 def run_by_command(argv: list[str], runners: dict) -> None:
-    if not argv:
+    try:
+        coroutine = runners.get(argv[1])
+    except IndexError:
         return
-
-    coroutine = runners.get(argv[1])
 
     if coroutine:
         asyncio.run(coroutine())
@@ -23,8 +23,6 @@ if __name__ == "__main__":
     run_by_command(
         argv=sys.argv,
         runners={
-            "consumer": run_consumer
+            "consumer": run_consumer,
         }
     )
-
-
