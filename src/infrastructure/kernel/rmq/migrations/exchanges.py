@@ -20,7 +20,7 @@ class BaseExchangeMigrator(IExchangeMigrator):
         self._connector = connector
 
     async def migrate(self, exchange: RmqExchange) -> None:
-        channel = await self._connector.get_channel()
-        await channel.declare_exchange(
-            exchange.name, exchange.exchange_type, **exchange.kwargs
-        )
+        async with self._connector.channel_pool.acquire() as channel:
+            await channel.declare_exchange(
+                exchange.name, exchange.exchange_type, **exchange.kwargs
+            )

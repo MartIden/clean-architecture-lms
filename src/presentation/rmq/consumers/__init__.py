@@ -10,12 +10,7 @@ from src.presentation.rmq.consumers.user_new import UserNewConsumer
 
 consumers = {
     "prod": [],
-    "dev":  [
-        UserNewConsumer,
-        UserNewConsumer,
-        UserNewConsumer,
-        UserNewConsumer,
-    ],
+    "dev":  [UserNewConsumer],
     "test": [],
 }
 

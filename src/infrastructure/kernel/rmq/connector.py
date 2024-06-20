@@ -2,7 +2,6 @@ import asyncio
 from abc import ABC, abstractmethod
 from asyncio import AbstractEventLoop
 from dataclasses import dataclass
-from functools import lru_cache
 from typing import Optional
 
 import aio_pika
@@ -22,9 +21,6 @@ class IRmqConnector(ABC):
     @abstractmethod
     async def _connection(self) -> AbstractConnection: ...
 
-    @abstractmethod
-    async def get_channel(self) -> Channel: ...
-
     @property
     @abstractmethod
     def connection_pool(self) -> Pool[AbstractConnection]: ...
@@ -40,7 +36,6 @@ class RmqConnectionSettings:
     loop: Optional[AbstractEventLoop] = None
     pool_size = 10
     connection_size = 10
-    max_messages_in_parallel = 100
 
 
 class RmqConnectorImpl(IRmqConnector):
@@ -50,7 +45,6 @@ class RmqConnectorImpl(IRmqConnector):
         self._loop = connection_settings.loop
         self._pool_size = connection_settings.pool_size
         self._connection_size = connection_settings.connection_size
-        self._max_messages_in_parallel = connection_settings.max_messages_in_parallel
 
     @property
     def _event_loop(self) -> AbstractEventLoop:
@@ -60,22 +54,17 @@ class RmqConnectorImpl(IRmqConnector):
     async def _connection(self) -> AbstractConnection:
         return await aio_pika.connect(url=self._uri)
 
-    @alru_cache(maxsize=10)
-    async def get_channel(self) -> Channel:
+    async def _get_channel(self) -> Channel:
         async with self.connection_pool.acquire() as connection:
-            channel = await connection.channel()
-            await channel.set_qos(prefetch_count=self._max_messages_in_parallel)
-
-            return channel
+            return await connection.channel()
 
     @property
     def connection_pool(self) -> Pool[AbstractConnection]:
         return Pool(self._connection, max_size=self._connection_size)
 
     @property
-    @lru_cache(maxsize=10)
     def channel_pool(self) -> Pool[Channel]:
-        return Pool(self.get_channel, max_size=self._pool_size)
+        return Pool(self._get_channel, max_size=self._pool_size)
 
 
 class IRmqConnectorFactory(ABC):
