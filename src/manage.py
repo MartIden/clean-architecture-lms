@@ -1,7 +1,7 @@
 import asyncio
 import sys
 
-from src.infrastructure.kernel.rmq.run import RmqRunnerFactory
+from src.presentation.rmq.run import RmqRunnerFactory
 
 
 async def run_consumer():
