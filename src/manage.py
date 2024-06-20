@@ -26,5 +26,3 @@ if __name__ == "__main__":
             "consumer": run_consumer
         }
     )
-
-

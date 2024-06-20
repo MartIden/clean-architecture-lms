@@ -63,9 +63,8 @@ class AbstractRmqConsumer(IRmqConsumer, ABC):
 
             await queue.consume(self._process_incoming_message, no_ack=no_ack, **kwargs)
 
-            self._logger.info(
-                f"{type(self).__name__} for queue: '{self._queue_name}' has been launched"
-            )
+            msg = f"{type(self).__name__} for queue: '{self._queue_name}' has been launched"
+            self._logger.info(msg)
 
 
 class RmqHandlersRunnerConsumerImpl(AbstractRmqConsumer, ABC):
