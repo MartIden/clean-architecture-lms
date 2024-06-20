@@ -1,0 +1,39 @@
+version: '3.5'
+
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - base
+    restart: always
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "pass"
+    ports:
+      - "5432:5432"
+    networks:
+      - base
+    restart: unless-stopped
+
+  rmq:
+    image: "rabbitmq:3.6-management-alpine"
+    hostname: "rabbitmq-host"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "pass"
+    networks:
+      - base
+    restart: unless-stopped
+
+networks:
+  base:
+    driver: bridge
