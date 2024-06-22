@@ -9,7 +9,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class AppEnvTypes(Enum):
     PROD: Union["AppEnvTypes", str] = "prod"
     DEV:  Union["AppEnvTypes", str] = "dev"
-    TEST: Union["AppEnvTypes", str] = "test"
+    TEST: Union["AppEnvTypes", str] = "rmq"
 
 
 class BaseAppSettings(BaseSettings):

@@ -4,7 +4,7 @@ import json
 
 from aio_pika.abc import AbstractIncomingMessage
 
-from src.infrastructure.ioc.container.application import ApplicationContainer
+from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.rmq.init.exceptions import NackInterruptException, InterruptException
 from src.presentation.rmq.init.handlers.factory_method import AbstractRmqHandlerCreator
 from src.presentation.rmq.init.handlers.handlers_runner import HandlersRunner
@@ -18,7 +18,7 @@ class IRmqConsumer(ABC):
 
 
 class AbstractRmqConsumer(IRmqConsumer, ABC):
-    def __init__(self, di_container: ApplicationContainer):
+    def __init__(self, di_container: AppContainer):
         self._di_container = di_container
         self._logger = self._di_container.core.logger()
         self._connector = self._di_container.infrastructure.rmq_connector()

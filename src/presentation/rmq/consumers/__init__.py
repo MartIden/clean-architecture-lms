@@ -1,6 +1,6 @@
 from dependency_injector.wiring import inject, Provide
 
-from src.infrastructure.ioc.container.application import ApplicationContainer
+from src.infrastructure.ioc.container.application import AppContainer
 from src.infrastructure.settings.stage.app import AppSettings
 
 
@@ -13,11 +13,11 @@ consumers = {
     "dev":  [
         UserNewConsumer,
     ],
-    "test": [],
+    "rmq": [],
 }
 
 
 @inject
-def get_consumers(app_settings: AppSettings = Provide[ApplicationContainer.core.settings]) -> list:
+def get_consumers(app_settings: AppSettings = Provide[AppContainer.core.settings]) -> list:
     env = app_settings.APP_ENV.value.lower()
     return consumers.get(env)

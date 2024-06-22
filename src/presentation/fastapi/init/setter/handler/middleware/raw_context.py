@@ -1,7 +1,7 @@
 from starlette_context.middleware import RawContextMiddleware
 from starlette_context import plugins
 
-from src.presentation.fastapi.init.middleware_handler.interface import IMiddlewareHandler
+from src.presentation.fastapi.init.setter.handler.middleware.interface import IMiddlewareHandler
 
 
 class RawContexMiddlewareHandler(IMiddlewareHandler):

@@ -1,14 +1,15 @@
-from dependency_injector.wiring import Provide
+from dependency_injector.wiring import Provide, inject
 from starlette.middleware.cors import CORSMiddleware
 
-from src.infrastructure.ioc.container.application import ApplicationContainer
+from src.infrastructure.ioc.container.application import AppContainer
 from src.infrastructure.settings.stage.app import AppSettings
-from src.presentation.fastapi.init.middleware_handler.interface import IMiddlewareHandler
+from src.presentation.fastapi.init.setter.handler.middleware.interface import IMiddlewareHandler
 
 
 class CorsMiddlewareHandler(IMiddlewareHandler):
 
-    def __init__(self, app_settings: AppSettings = Provide[ApplicationContainer.core.settings]):
+    @inject
+    def __init__(self, app_settings: AppSettings = Provide[AppContainer.core.settings]):
         self.__app_settings = app_settings
 
     @property

@@ -1,7 +1,7 @@
 import asyncio
 
 from src.infrastructure.settings.stage.app import AppSettings
-from src.presentation.rmq.init.connector import (
+from src.infrastructure.rmq.connector import (
     IRmqConnectorFactory,
     IRmqConnector,
     RmqConnectionSettings,

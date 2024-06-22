@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 
 from fastapi import FastAPI
 
-from src.presentation.fastapi.init.middleware_handler.cors import CorsMiddlewareHandler
-from src.presentation.fastapi.init.middleware_handler.interface import IMiddlewareHandler
-from src.presentation.fastapi.init.middleware_handler.raw_context import RawContexMiddlewareHandler
-from src.presentation.fastapi.init.setters.interfase import IAppSetter
+from src.presentation.fastapi.init.setter.handler.middleware import CorsMiddlewareHandler
+from src.presentation.fastapi.init.setter.handler.middleware import IMiddlewareHandler
+from src.presentation.fastapi.init.setter.handler.middleware import RawContexMiddlewareHandler
+from src.presentation.fastapi.init.setter.interfase import IAppSetter
 
 
 class MiddlewaresSetter(IAppSetter):

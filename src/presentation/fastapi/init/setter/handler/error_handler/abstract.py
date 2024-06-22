@@ -7,7 +7,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette_context import context
 
-from src.infrastructure.ioc.container.application import ApplicationContainer
+from src.infrastructure.ioc.container.application import AppContainer
 from src.infrastructure.settings.stage.app import AppSettings
 
 
@@ -15,8 +15,8 @@ class AbstractErrorHandler:
 
     def __init__(
         self,
-        app_settings: AppSettings = Provide[ApplicationContainer.core.settings],
-        logger: Logger = Provide[ApplicationContainer.core.logger],
+        app_settings: AppSettings = Provide[AppContainer.core.settings],
+        logger: Logger = Provide[AppContainer.core.logger],
     ):
         self.__logger = logger
         self.__app_settings = app_settings

@@ -7,7 +7,7 @@ from aio_pika import Message
 from aio_pika.abc import DeliveryMode
 from pydantic import BaseModel
 
-from src.presentation.rmq.init.connector import RmqConnectorImpl
+from src.infrastructure.rmq.connector import RmqConnectorImpl
 from src.infrastructure.settings.stage.app import AppSettings
 
 

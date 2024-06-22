@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 
 from dependency_injector.wiring import Provide, inject
 
-from src.infrastructure.ioc.container.application import ApplicationContainer
-from src.presentation.rmq.init.connector import IRmqConnector
+from src.infrastructure.ioc.container.application import AppContainer
+from src.infrastructure.rmq.connector import IRmqConnector
 from src.infrastructure.settings.unit.rmq_migration import RmqQueue
 
 
@@ -13,10 +13,10 @@ class IQueueMigrator(ABC):
         pass
 
 
-class BaseQueueMigrator(IQueueMigrator):
+class BaseQueuesMigrator(IQueueMigrator):
 
     @inject
-    def __init__(self, connector: IRmqConnector = Provide[ApplicationContainer.infrastructure.rmq_connector]):
+    def __init__(self, connector: IRmqConnector = Provide[AppContainer.infrastructure.rmq_connector]):
         self._connector = connector
 
     async def __create_queue(self, queue: RmqQueue) -> None:

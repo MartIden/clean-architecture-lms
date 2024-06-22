@@ -11,7 +11,7 @@ class AppSettings(BaseAppSettings):
 
     """ FASTAPI """
     DEBUG: bool = False
-    DOCS_URL: str | None = None
+    DOCS_URL: str | None = "/docs"
     OPENAPI_PREFIX: str = ""
     OPENAPI_URL: Optional[str] = None
     REDOC_URL: str | None = None
@@ -20,7 +20,6 @@ class AppSettings(BaseAppSettings):
     HOST: str = Field("0.0.0.0", validation_alias="HOST")
     PORT: int = Field(5005, validation_alias="PORT")
     RELOAD: bool = Field(True, validation_alias="RELOAD")
-
 
     """ DOC_AUTH """
     DOC_LOGIN: str = "admin"
@@ -46,6 +45,7 @@ class AppSettings(BaseAppSettings):
     ]
 
     LOGGING_LEVEL: int = Field(20, validation_alias="LOGGING_LEVEL")
+    FASTAPI_LOGGING_LEVEL: int = Field(30, validation_alias="LOGGING_LEVEL")
 
     @property
     def fastapi_kwargs(self) -> Dict[str, Any]:

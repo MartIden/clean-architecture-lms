@@ -1,11 +1,11 @@
 import asyncio
 from abc import abstractmethod, ABC
 
-from src.infrastructure.ioc.container.application import ApplicationContainer
+from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.rmq.init.consumer import IRmqConsumer
 from src.presentation.rmq.init.migrations.binding import BaseRmqBindingsMigrator
-from src.presentation.rmq.init.migrations.exchanges import BaseExchangeMigrator
-from src.presentation.rmq.init.migrations.queue import BaseQueueMigrator
+from src.presentation.rmq.init.migrations.exchanges import BaseExchangesMigrator
+from src.presentation.rmq.init.migrations.queue import BaseQueuesMigrator
 from src.presentation.rmq.consumers import get_consumers
 from src.presentation.rmq.init.declarers.binding import RmqBindingsDeclarerImpl
 from src.presentation.rmq.init.declarers.exchange import RmqExchangesDeclarerImpl
@@ -24,7 +24,7 @@ class RmqRunnerImpl(IRmqRunner):
         self,
         declarers: list[IRmqDeclarer],
         consumers: list[type[IRmqConsumer]],
-        di_container: ApplicationContainer
+        di_container: AppContainer
     ):
         self.__declarers = declarers
         self.__consumers = consumers
@@ -49,11 +49,11 @@ class RmqRunnerImpl(IRmqRunner):
 class RmqRunnerFactory:
     @classmethod
     def create(cls) -> IRmqRunner:
-        container = ApplicationContainer()
+        container = AppContainer()
 
         declarers = [
-            RmqExchangesDeclarerImpl(migrator=BaseExchangeMigrator()),
-            RmqQueuesDeclarerImpl(migrator=BaseQueueMigrator()),
+            RmqExchangesDeclarerImpl(migrator=BaseExchangesMigrator()),
+            RmqQueuesDeclarerImpl(migrator=BaseQueuesMigrator()),
             RmqBindingsDeclarerImpl(migrator=BaseRmqBindingsMigrator()),
         ]
 

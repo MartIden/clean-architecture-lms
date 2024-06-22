@@ -1,12 +1,13 @@
-from dependency_injector.wiring import Provide
+from dependency_injector.providers import Factory
+from dependency_injector.wiring import Provide, inject
 from fastapi import FastAPI
 
+from src.infrastructure.ioc.container.application import AppContainer
 from src.infrastructure.settings.stage.app import AppSettings
-from src.presentation.fastapi.init.setters.interfase import IAppSetter
-from src.infrastructure.ioc.container.application import ApplicationContainer
-from src.presentation.fastapi.init.setters.event_handler import EventHandlersSetterFactory
-from src.presentation.fastapi.init.setters.exception import ExceptionsHandlerSetterFactory
-from src.presentation.fastapi.init.setters.middleware import MiddlewareSetterFactory
+from src.presentation.fastapi.init.setter.event_handler import EventHandlersSetterFactory
+from src.presentation.fastapi.init.setter.exception import ExceptionsHandlerSetterFactory
+from src.presentation.fastapi.init.setter.interfase import IAppSetter
+from src.presentation.fastapi.init.setter.middleware import MiddlewareSetterFactory
 
 
 class LmsApplication(FastAPI):
@@ -17,9 +18,11 @@ class LmsApplication(FastAPI):
 
 
 class LmsApplicationFactory:
+
+    @inject
     def __init__(
         self,
-        app_settings: AppSettings = Provide[ApplicationContainer.core.settings],
+        app_settings: AppSettings = Provide[AppContainer.core.settings],
     ):
         self.__app_settings = app_settings
 
@@ -30,5 +33,5 @@ class LmsApplicationFactory:
             MiddlewareSetterFactory().create(),
         ]
 
-        app = LmsApplication(**self.__app_settings.fastapi_kwargs)
-        return app.init(setters)
+        application = LmsApplication(**self.__app_settings.fastapi_kwargs)
+        return application.init(setters)

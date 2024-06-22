@@ -4,7 +4,7 @@ from typing import Any, List, Type, Optional
 from pydantic import ValidationError
 
 
-from src.infrastructure.ioc.container.application import ApplicationContainer
+from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.rmq.init.exceptions import SkipHandleException, InterruptException, NackInterruptException
 from src.presentation.rmq.init.handlers.abstract_handler import AbstractRmqHandler
 from src.presentation.rmq.init.handlers.factory_method import AbstractRmqHandlerCreator
@@ -15,7 +15,7 @@ class HandlersRunner:
         self,
         message: Any,
         handlers_factories: List[Type[AbstractRmqHandlerCreator]],
-        di_container: ApplicationContainer,
+        di_container: AppContainer,
         context: Optional[dict],
     ):
         self._message = message

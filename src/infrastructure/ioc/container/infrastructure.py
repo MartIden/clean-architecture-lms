@@ -4,7 +4,7 @@ from dependency_injector.providers import Factory
 from src.infrastructure.ioc.container.core import CoreContainer
 from src.infrastructure.ioc.factory.postgres_connector import PostgresConnectorFactory, IPostgresConnectorFactory
 from src.infrastructure.ioc.factory.rmq_connector import RmqConnectorFactory
-from src.presentation.rmq.init.connector import IRmqConnector
+from src.infrastructure.rmq.connector import IRmqConnector
 
 
 class InfrastructureContainer(containers.DeclarativeContainer):
