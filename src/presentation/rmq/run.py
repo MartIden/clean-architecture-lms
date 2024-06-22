@@ -1,81 +1,16 @@
 import asyncio
 from abc import abstractmethod, ABC
-from logging import Logger
 
-from dependency_injector.wiring import Provide
-
-from src.infrastructure.kernel.ioc.container.application import ApplicationContainer
-from src.infrastructure.kernel.rmq.consumer import IRmqConsumer
-from src.infrastructure.kernel.rmq.migrations.binding import IRmqBindingsMigrator, BaseRmqBindingsMigrator
-from src.infrastructure.kernel.rmq.migrations.exchanges import IExchangeMigrator, BaseExchangeMigrator
-from src.infrastructure.kernel.rmq.migrations.queue import IQueueMigrator, BaseQueueMigrator
-from src.infrastructure.kernel.settings.stage.app import AppSettings
+from src.infrastructure.ioc.container.application import ApplicationContainer
+from src.presentation.rmq.init.consumer import IRmqConsumer
+from src.presentation.rmq.init.migrations.binding import BaseRmqBindingsMigrator
+from src.presentation.rmq.init.migrations.exchanges import BaseExchangeMigrator
+from src.presentation.rmq.init.migrations.queue import BaseQueueMigrator
 from src.presentation.rmq.consumers import get_consumers
-
-
-class IRmqDeclarer(ABC):
-    @abstractmethod
-    async def declare(self) -> None: ...
-
-
-class RmqExchangesDeclarerImpl(IRmqDeclarer):
-
-    def __init__(
-        self,
-        migrator: IExchangeMigrator,
-        app_settings: AppSettings = Provide[ApplicationContainer.core.settings],
-        logger: Logger = Provide[ApplicationContainer.core.logger]
-    ):
-        self.__migrator = migrator
-        self._app_settings = app_settings
-        self._logger = logger
-
-    async def declare(self) -> None:
-        exchanges = self._app_settings.RMQ_MIGRATION_SETTINGS.exchanges
-
-        for exchange in exchanges:
-            await self.__migrator.migrate(exchange)
-            self._logger.info(f"Declare exchange: {exchange.name}")
-
-
-class RmqQueuesDeclarerImpl(IRmqDeclarer):
-    def __init__(
-        self,
-        migrator: IQueueMigrator,
-        app_settings: AppSettings = Provide[ApplicationContainer.core.settings],
-        logger: Logger = Provide[ApplicationContainer.core.logger]
-    ):
-        self.__migrator = migrator
-        self._app_settings = app_settings
-        self._logger = logger
-
-    async def declare(self) -> None:
-        queues = self._app_settings.RMQ_MIGRATION_SETTINGS.queues
-
-        for queue in queues:
-            await self.__migrator.migrate(queue)
-            self._logger.info(f"Declare queue: {queue.name}")
-
-
-class RmqBindingsDeclarerImpl(IRmqDeclarer):
-
-    def __init__(
-        self,
-        migrator: IRmqBindingsMigrator,
-        app_settings: AppSettings = Provide[ApplicationContainer.core.settings],
-        logger: Logger = Provide[ApplicationContainer.core.logger]
-    ):
-        self.__migrator = migrator
-        self._app_settings = app_settings
-        self._logger = logger
-
-    async def declare(self) -> None:
-        bindings = self._app_settings.RMQ_MIGRATION_SETTINGS.bindings
-
-        for binding in bindings:
-            await self.__migrator.migrate(binding)
-            msg = f"Declare binding from exchange {binding.exchange} to queue {binding.queue}"
-            self._logger.info(msg)
+from src.presentation.rmq.init.declarers.binding import RmqBindingsDeclarerImpl
+from src.presentation.rmq.init.declarers.exchange import RmqExchangesDeclarerImpl
+from src.presentation.rmq.init.declarers.interface import IRmqDeclarer
+from src.presentation.rmq.init.declarers.queue import RmqQueuesDeclarerImpl
 
 
 class IRmqRunner(ABC):

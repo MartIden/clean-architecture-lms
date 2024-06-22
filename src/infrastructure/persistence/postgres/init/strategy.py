@@ -2,7 +2,7 @@ import asyncpg
 from asyncio_connection_pool import ConnectionStrategy
 from asyncpg import Connection
 
-from src.infrastructure.kernel.settings.stage.app import AppSettings
+from src.infrastructure.settings.stage.app import AppSettings
 
 
 class PostgresStrategy(ConnectionStrategy):

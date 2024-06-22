@@ -1,5 +1,5 @@
-from src.infrastructure.kernel.rmq.handlers.factory_method import AbstractRmqHandlerCreator
 from src.presentation.rmq.handlers.user.create.handler import CreateUserHandler
+from src.presentation.rmq.init.handlers.factory_method import AbstractRmqHandlerCreator
 
 
 class CreateUserHandlerFactory(AbstractRmqHandlerCreator):

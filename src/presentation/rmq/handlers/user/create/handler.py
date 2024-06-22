@@ -1,6 +1,7 @@
 from logging import Logger
+from typing import Optional
 
-from src.infrastructure.kernel.rmq.handlers.abstract_handler import AbstractRmqHandler
+from src.presentation.rmq.init.handlers.abstract_handler import AbstractRmqHandler
 
 
 class CreateUserHandler(AbstractRmqHandler):
@@ -9,5 +10,6 @@ class CreateUserHandler(AbstractRmqHandler):
         self.__message = message
         self._logger = logger
 
-    async def handle(self) -> None:
+    async def handle(self, context: Optional[dict]) -> None:
+        self._logger.info("Context", extra=context)
         self._logger.info("User created", extra=self.__message)
