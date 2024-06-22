@@ -7,8 +7,8 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from pydantic_core import ValidationError
 
-from src.presentation.fastapi.init.setter.handler.error_handler import Error500Handler
-from src.presentation.fastapi.init.setter.handler.error_handler import IErrorHandler
+from src.presentation.fastapi.init.setter.handler.error_handler.error_500 import Error500Handler
+from src.presentation.fastapi.init.setter.handler.error_handler.interface import IErrorHandler
 from src.presentation.fastapi.init.setter.interfase import IAppSetter
 
 

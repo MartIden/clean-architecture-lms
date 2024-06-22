@@ -1,7 +1,9 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from fastapi import FastAPI, APIRouter, Depends
 
+from src.presentation.fastapi.depends.request_json_logger import RequestJSONLoggerMiddleware
 from src.presentation.fastapi.init.setter.interfase import IAppSetter
 from src.presentation.fastapi.router.urls import api_router
 
@@ -26,3 +28,13 @@ class RoutersSetter(IAppSetter):
         for router_config in self.__router_configs:
             app.include_router(router_config.router, **router_config.kwargs)
         return app
+
+
+class IRoutersSetterFactory(ABC):
+    @abstractmethod
+    def create(self) -> IAppSetter: ...
+
+
+class RoutersSetterFactory(IRoutersSetterFactory):
+    def create(self) -> IAppSetter:
+        return RoutersSetter(configs)

@@ -8,6 +8,7 @@ from src.presentation.fastapi.init.setter.event_handler import EventHandlersSett
 from src.presentation.fastapi.init.setter.exception import ExceptionsHandlerSetterFactory
 from src.presentation.fastapi.init.setter.interfase import IAppSetter
 from src.presentation.fastapi.init.setter.middleware import MiddlewareSetterFactory
+from src.presentation.fastapi.init.setter.router import RoutersSetterFactory
 
 
 class LmsApplication(FastAPI):
@@ -31,6 +32,7 @@ class LmsApplicationFactory:
             ExceptionsHandlerSetterFactory().create(),
             EventHandlersSetterFactory().create(),
             MiddlewareSetterFactory().create(),
+            RoutersSetterFactory().create(),
         ]
 
         application = LmsApplication(**self.__app_settings.fastapi_kwargs)
