@@ -3,7 +3,6 @@ import sys
 
 import src
 from src.infrastructure.ioc.container.application import AppContainer
-from src.presentation.fastapi.init.app import LmsApplicationFactory
 from src.presentation.rmq.init.run import RmqRunnerFactory
 from src.presentation.fastapi.init.run import FastApiRunnerFactory
 

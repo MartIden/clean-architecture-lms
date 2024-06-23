@@ -5,7 +5,6 @@ from dependency_injector.wiring import Provide, inject
 
 from src.infrastructure.ioc.container.application import AppContainer
 from src.infrastructure.settings.stage.app import AppSettings
-from src.presentation.fastapi.init.app import LmsApplicationFactory, LmsApplication
 
 
 class IFastApiRunner(ABC):
