@@ -1,21 +1,18 @@
 import json
 from logging import Logger
 
-from dependency_injector.wiring import Provide
-from fastapi import Request
+from dependency_injector.wiring import Provide, inject
+from fastapi import Request, Depends
 from starlette_context import context
 
 from src.infrastructure.ioc.container.application import AppContainer
 
 
-class RequestJSONLoggerMiddleware:
-    def __init__(self, request: Request, logger: Logger):
-        self.__logger = logger
-        self.__request: Request = request
+class RequestJSONLoggerDepend:
 
-    @property
-    async def log_message(self) -> dict:
-        unprepared_body = str(await self.__request.body(), "utf-8")
+    @classmethod
+    async def __create_log_message(cls, request: Request) -> dict:
+        unprepared_body = str(await request.body(), "utf-8")
 
         try:
             body = json.loads(unprepared_body)
@@ -23,21 +20,15 @@ class RequestJSONLoggerMiddleware:
             body = unprepared_body
 
         return {
-            "url": self.__request.url.path,
-            "method": self.__request.method,
-            "queries": self.__request.query_params,
+            "url": request.url.path,
+            "method": request.method,
+            "queries": request.query_params,
             "body": body,
             **context.data,
         }
 
-    async def log(self):
-        log = await self.log_message
-        self.__logger.info("request_data", extra=log)
-
-    @staticmethod
-    async def log_middle(request: Request, logger: Logger = Provide[AppContainer.core.logger]):
-        try:
-            logging_middleware = RequestJSONLoggerMiddleware(request, logger)
-            await logging_middleware.log()
-        except Exception:
-            pass
+    @classmethod
+    @inject
+    async def log_it(cls, request: Request, logger: Logger = Depends(Provide[AppContainer.core.logger])) -> None:
+        msg = await cls.__create_log_message(request)
+        logger.info("request_data", extra=msg)

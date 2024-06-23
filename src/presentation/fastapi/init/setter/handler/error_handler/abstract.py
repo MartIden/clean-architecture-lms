@@ -1,22 +1,25 @@
 import traceback
+from abc import ABC
 from logging import Logger
 
-from dependency_injector.wiring import Provide
-from fastapi import HTTPException
+from dependency_injector.providers import Factory
+from dependency_injector.wiring import Provide, inject
+from fastapi import HTTPException, Depends
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette_context import context
 
-from src.infrastructure.ioc.container.application import AppContainer
 from src.infrastructure.settings.stage.app import AppSettings
+from src.presentation.fastapi.init.setter.handler.error_handler.interface import IErrorHandler
 
 
-class AbstractErrorHandler:
+class AbstractErrorHandler(IErrorHandler, ABC):
 
+    @inject
     def __init__(
         self,
-        app_settings: AppSettings = Provide[AppContainer.core.settings],
-        logger: Logger = Provide[AppContainer.core.logger],
+        app_settings: AppSettings,
+        logger: Logger,
     ):
         self.__logger = logger
         self.__app_settings = app_settings

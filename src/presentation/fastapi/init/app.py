@@ -1,7 +1,7 @@
-from dependency_injector.providers import Factory
 from dependency_injector.wiring import Provide, inject
 from fastapi import FastAPI
 
+import src
 from src.infrastructure.ioc.container.application import AppContainer
 from src.infrastructure.settings.stage.app import AppSettings
 from src.presentation.fastapi.init.setter.event_handler import EventHandlersSetterFactory
@@ -28,6 +28,8 @@ class LmsApplicationFactory:
         self.__app_settings = app_settings
 
     def create(self) -> LmsApplication:
+        container = AppContainer()
+
         setters = [
             ExceptionsHandlerSetterFactory().create(),
             EventHandlersSetterFactory().create(),
@@ -36,4 +38,12 @@ class LmsApplicationFactory:
         ]
 
         application = LmsApplication(**self.__app_settings.fastapi_kwargs)
+        application.container = container
+
         return application.init(setters)
+
+
+container = AppContainer()
+container.wire(packages=[src])
+
+app = LmsApplicationFactory().create()
