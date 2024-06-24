@@ -28,8 +28,6 @@ class LmsApplicationFactory:
         self.__app_settings = app_settings
 
     def create(self) -> LmsApplication:
-        container = AppContainer()
-
         setters = [
             ExceptionsHandlerSetterFactory().create(),
             EventHandlersSetterFactory().create(),
@@ -38,7 +36,6 @@ class LmsApplicationFactory:
         ]
 
         application = LmsApplication(**self.__app_settings.fastapi_kwargs)
-        application.container = container
 
         return application.init(setters)
 
@@ -46,4 +43,4 @@ class LmsApplicationFactory:
 container = AppContainer()
 container.wire(packages=[src])
 
-app = LmsApplicationFactory().create()
+app_instance = LmsApplicationFactory().create()
