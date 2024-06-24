@@ -8,4 +8,3 @@ from src.domain.user.value_object.password import UserPassword
 class User:
     login: UserLogin
     password: UserPassword
-    
