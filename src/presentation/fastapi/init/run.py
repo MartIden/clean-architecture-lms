@@ -20,7 +20,7 @@ class FastApiRunner(IFastApiRunner):
 
     def run(self) -> None:
         uvicorn.run(
-            "src.presentation.fastapi.init.app:app",
+            "src.presentation.fastapi.init.app:app_instance",
             host=self.__app_settings.HOST,
             port=self.__app_settings.PORT,
             reload=self.__app_settings.RELOAD,

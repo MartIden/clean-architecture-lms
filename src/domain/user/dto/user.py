@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from src.domain.user.enum.roles import UserRoleEnum
+
 
 @dataclass
 class UserAnswer:
@@ -12,3 +14,4 @@ class UserInCreateRequest:
     login: str
     email: str
     password: str
+    roles: list[UserRoleEnum]
