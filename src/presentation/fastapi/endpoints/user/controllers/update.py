@@ -1,6 +1,7 @@
 from dependency_injector.wiring import Provide
 from fastapi import Depends
 
+from src.application.service.user.crud import IUserCrudService
 from src.domain.common.data_models import JsonResponse
 from src.domain.user.dto.user import UserInCreate, UserInResponse, UserInUpdate
 from src.infrastructure.ioc.container.application import AppContainer
@@ -12,12 +13,12 @@ class UpdateUserController(IController[UserInUpdate, JsonResponse[UserInResponse
 
     def __init__(
         self,
-        repo: UserRepo = Depends(Provide[AppContainer.infrastructure.user_repo])
+        user_crud: IUserCrudService = Depends(Provide[AppContainer.services.user_crud])
     ):
-        self.__repo = repo
+        self.__user_crud = user_crud
 
     async def __call__(self, request: UserInUpdate) -> JsonResponse[UserInResponse]:
-        user = await self.__repo.update(request)
+        user = await self.__user_crud.update(request)
         return JsonResponse[UserInResponse](
             answer=UserInResponse.from_user(user)
         )

@@ -34,17 +34,20 @@ class UserInUpdate(JsonModel):
 
 
 class UserInResponse(JsonModel):
+    id: UUID4
     login: UserLogin
     email: UserEmail
     roles: list[UserRoleEnum]
 
     @classmethod
-    def from_user(cls, user: User) -> "UserInResponse":
-        return cls(
-            login=user.login,
-            email=user.email,
-            roles=user.roles
-        )
+    def from_user(cls, user: User) -> Optional["UserInResponse"]:
+        if user:
+            return cls(
+                id=user.id,
+                login=user.login,
+                email=user.email,
+                roles=user.roles
+            )
 
 
 class UsersInResponse(JsonModel):

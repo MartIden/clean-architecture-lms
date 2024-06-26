@@ -2,6 +2,7 @@ from dependency_injector.wiring import Provide
 from fastapi import Depends
 from pydantic import UUID4
 
+from src.application.service.user.crud import IUserCrudService
 from src.domain.common.data_models import JsonResponse
 from src.domain.user.dto.user import UserInCreate, UserInResponse
 from src.infrastructure.ioc.container.application import AppContainer
@@ -13,12 +14,12 @@ class ReadUserController(IController[UUID4, JsonResponse[UserInResponse]]):
 
     def __init__(
         self,
-        repo: UserRepo = Depends(Provide[AppContainer.infrastructure.user_repo])
+        user_crud: IUserCrudService = Depends(Provide[AppContainer.services.user_crud])
     ):
-        self.__repo = repo
+        self.__user_crud = user_crud
 
     async def __call__(self, request: UUID4) -> JsonResponse[UserInResponse]:
-        user = await self.__repo.read_one(request)
+        user = await self.__user_crud.read_one(request)
         return JsonResponse[UserInResponse](
             answer=UserInResponse.from_user(user)
         )

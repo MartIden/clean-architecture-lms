@@ -22,3 +22,6 @@ class IUserRepo(ABC):
 
     @abstractmethod
     async def read_many(self, limit: int, offset: int, order: str, order_by: str) -> list[User]: ...
+
+    @abstractmethod
+    async def count(self) -> int: ...
