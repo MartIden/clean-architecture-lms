@@ -12,7 +12,7 @@ from src.presentation.fastapi.endpoints.user.controllers.read import ReadUserCon
 from src.presentation.fastapi.endpoints.user.controllers.read_many import ReadManyUserController
 from src.presentation.fastapi.endpoints.user.controllers.update import UpdateUserController
 
-user_api = APIRouter(prefix="/user")
+user_api = APIRouter(prefix="/user", tags=["user"])
 
 
 @user_api.post(
