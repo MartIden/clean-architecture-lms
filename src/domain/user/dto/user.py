@@ -12,29 +12,29 @@ from src.domain.user.value_object.password import UserPassword
 
 
 class UserInCreate(JsonModel):
-    login: UserLogin
-    email: UserEmail
+    login:    UserLogin
+    email:    UserEmail
     password: UserPassword
-    roles: list[UserRoleEnum]
+    roles:    list[UserRoleEnum]
 
 
 class UserInUpdateRequest(JsonModel):
-    login: Optional[UserLogin] = None
-    email: Optional[UserEmail] = None
+    login:    Optional[UserLogin] = None
+    email:    Optional[UserEmail] = None
     password: Optional[UserPassword] = None
-    roles: Optional[list[UserRoleEnum]] = None
+    roles:    Optional[list[UserRoleEnum]] = None
 
 
 class UserInUpdate(JsonModel):
-    id: UUID4
-    login: Optional[UserLogin] = None
-    email: Optional[UserEmail] = None
+    id:       UUID4
+    login:    Optional[UserLogin] = None
+    email:    Optional[UserEmail] = None
     password: Optional[UserPassword] = None
-    roles: Optional[list[UserRoleEnum]] = None
+    roles:    Optional[list[UserRoleEnum]] = None
 
 
 class UserInResponse(JsonModel):
-    id: UUID4
+    id:    UUID4
     login: UserLogin
     email: UserEmail
     roles: list[UserRoleEnum]
@@ -51,7 +51,7 @@ class UserInResponse(JsonModel):
 
 
 class UsersInResponse(JsonModel):
-    rows: list[UserInResponse]
+    rows:  list[UserInResponse]
     count: int
 
 
@@ -61,9 +61,9 @@ class Order(str, Enum):
 
 
 class UserManyInRequest(JsonModel):
-    limit: int
+    limit:  int
     offset: int
-    order: Order
+    order:  Order
 
     @field_validator("limit")
     def double(cls, v: int) -> int:
