@@ -13,6 +13,13 @@ class UserInCreate(JsonModel):
     roles: list[UserRoleEnum]
 
 
+class UserInUpdate(JsonModel):
+    login: UserLogin | None = None
+    email: UserEmail | None = None
+    password: UserPassword | None = None
+    roles: list[UserRoleEnum] | None = None
+
+
 class UserInResponse(JsonModel):
     login: str
     email: str

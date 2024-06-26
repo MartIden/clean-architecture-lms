@@ -1,24 +1,23 @@
 from datetime import datetime
 
-from pypika import Table, PostgreSQLQuery
+from pydantic import UUID4
+from pypika import PostgreSQLQuery
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
-from src.domain.user.dto.user import UserInCreate
+from src.domain.user.dto.user import UserInCreate, UserInUpdate
 from src.domain.user.entity.user import User
+from src.domain.user.exceptions.exist import UserIsNotExistsError
 from src.domain.user.ports.user_repo import IUserRepo
+from src.infrastructure.persistence.postgres.repositiries.abstract import AbstractPostgresRepository
 
 
-class UserRepo(IUserRepo):
-
-    def __init__(self, session_maker: async_sessionmaker[AsyncSession]):
-        self.__session_maker = session_maker
+class UserRepo(IUserRepo, AbstractPostgresRepository[UUID4, User]):
 
     @property
-    def table(self) -> Table:
-        return Table("users")
+    def table_name(self) -> str:
+        return "users"
 
-    async def create(self, data: UserInCreate) -> User:
+    async def create(self, schema: UserInCreate) -> User:
         now = int(datetime.now().timestamp())
         query = PostgreSQLQuery \
             .into(self.table) \
@@ -31,18 +30,32 @@ class UserRepo(IUserRepo):
                 self.table.updated_at,
             ) \
             .insert(
-                data.login,
-                data.password,
-                data.email,
-                data.roles,
+                schema.login,
+                schema.password,
+                schema.email,
+                schema.roles,
                 now,
                 now,
             ) \
             .returning("*") \
             .get_sql()
 
-        async with self.__session_maker() as session:
-            result = await session.execute(text(query))
-            await session.commit()
-            row = result.fetchone()
-            return User(**row._mapping)
+        return await self._execute_one(query)
+
+    async def update(self, schema: UserInUpdate) -> User:
+        row = await self.read_one(schema.id)
+        user = User(**row._mapping)  # noqa
+
+        if not user:
+            raise UserIsNotExistsError(f"User with id {schema.id} is not exist")
+
+        query = PostgreSQLQuery.update(self.table) \
+            .set(self.table.login, schema.title or user.login) \
+            .set(self.table.email, schema.description or user.email) \
+            .set(self.table.password, schema.password or user.password) \
+            .set(self.table.roles, schema.password or user.roles) \
+            .set(self.table.updated_at, int(datetime.now().timestamp())) \
+            .where(self.table.id == schema.id) \
+            .get_sql()
+
+        return await self._execute_one(query)
