@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 from dependency_injector.providers import Factory
-from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
 from src.domain.user.ports.user_repo import IUserRepo
 from src.infrastructure.ioc.container.core import CoreContainer

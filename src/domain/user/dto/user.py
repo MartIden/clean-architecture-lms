@@ -1,3 +1,8 @@
+from enum import Enum
+from typing import Optional
+
+from pydantic import UUID4, field_validator
+
 from src.domain.common.data_models import JsonModel
 from src.domain.user.entity.user import User
 from src.domain.user.enum.roles import UserRoleEnum
@@ -13,16 +18,24 @@ class UserInCreate(JsonModel):
     roles: list[UserRoleEnum]
 
 
+class UserInUpdateRequest(JsonModel):
+    login: Optional[UserLogin] = None
+    email: Optional[UserEmail] = None
+    password: Optional[UserPassword] = None
+    roles: Optional[list[UserRoleEnum]] = None
+
+
 class UserInUpdate(JsonModel):
-    login: UserLogin | None = None
-    email: UserEmail | None = None
-    password: UserPassword | None = None
-    roles: list[UserRoleEnum] | None = None
+    id: UUID4
+    login: Optional[UserLogin] = None
+    email: Optional[UserEmail] = None
+    password: Optional[UserPassword] = None
+    roles: Optional[list[UserRoleEnum]] = None
 
 
 class UserInResponse(JsonModel):
-    login: str
-    email: str
+    login: UserLogin
+    email: UserEmail
     roles: list[UserRoleEnum]
 
     @classmethod
@@ -32,3 +45,24 @@ class UserInResponse(JsonModel):
             email=user.email,
             roles=user.roles
         )
+
+
+class UsersInResponse(JsonModel):
+    rows: list[UserInResponse]
+    count: int
+
+
+class Order(str, Enum):
+    asc = "ASC"
+    desc = "DESC"
+
+
+class UserManyInRequest(JsonModel):
+    limit: int
+    offset: int
+    order: Order
+
+    @field_validator("limit")
+    def double(cls, v: int) -> int:
+        assert v < 100
+        return v

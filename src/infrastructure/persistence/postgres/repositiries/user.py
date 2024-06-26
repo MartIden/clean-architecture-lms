@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Type
 
 from pydantic import UUID4
 from pypika import PostgreSQLQuery
@@ -11,7 +12,8 @@ from src.domain.user.ports.user_repo import IUserRepo
 from src.infrastructure.persistence.postgres.repositiries.abstract import AbstractPostgresRepository
 
 
-class UserRepo(IUserRepo, AbstractPostgresRepository[UUID4, User]):
+class UserRepo(AbstractPostgresRepository[UUID4, User], IUserRepo):
+    _result_model = User
 
     @property
     def table_name(self) -> str:
@@ -40,22 +42,26 @@ class UserRepo(IUserRepo, AbstractPostgresRepository[UUID4, User]):
             .returning("*") \
             .get_sql()
 
-        return await self._execute_one(query)
+        return await self._execute_one(text(query))
 
     async def update(self, schema: UserInUpdate) -> User:
-        row = await self.read_one(schema.id)
-        user = User(**row._mapping)  # noqa
+        user = await self.read_one(schema.id)
 
         if not user:
             raise UserIsNotExistsError(f"User with id {schema.id} is not exist")
 
+        roles = self._convert_list_to_postgres_array(
+            collection=[role.value for role in schema.roles or user.roles]
+        )
+
         query = PostgreSQLQuery.update(self.table) \
-            .set(self.table.login, schema.title or user.login) \
-            .set(self.table.email, schema.description or user.email) \
+            .set(self.table.login, schema.login or user.login) \
+            .set(self.table.email, schema.email or user.email) \
             .set(self.table.password, schema.password or user.password) \
-            .set(self.table.roles, schema.password or user.roles) \
+            .set(self.table.roles, roles) \
             .set(self.table.updated_at, int(datetime.now().timestamp())) \
             .where(self.table.id == schema.id) \
             .get_sql()
 
-        return await self._execute_one(query)
+        await self.execute(text(query))
+        return await self.read_one(schema.id)
