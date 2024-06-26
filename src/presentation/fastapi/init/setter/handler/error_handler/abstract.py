@@ -2,9 +2,8 @@ import traceback
 from abc import ABC
 from logging import Logger
 
-from dependency_injector.providers import Factory
-from dependency_injector.wiring import Provide, inject
-from fastapi import HTTPException, Depends
+from dependency_injector.wiring import inject
+from fastapi import HTTPException
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette_context import context
@@ -26,12 +25,12 @@ class AbstractErrorHandler(IErrorHandler, ABC):
 
     def _base_handle_logic(self, exc: HTTPException) -> JSONResponse:
         error = {
-            "error_type": type(exc).__name__,
-            "error_message": str(exc),
+            "errorType": type(exc).__name__,
+            "msg": str(exc),
         }
 
         if self.__app_settings.SHOW_TRACEBACK_IN_RESPONSE:
-            error["traceback"] = traceback.format_tb(exc.__traceback__)
+            error["traceback"] = str(traceback.format_tb(exc.__traceback__))
 
         extra = {
             "success": False,
@@ -41,7 +40,7 @@ class AbstractErrorHandler(IErrorHandler, ABC):
 
         json_response = JSONResponse(status_code=self._http_code, content=extra)
 
-        extra["error"]["traceback"] = traceback.format_tb(exc.__traceback__)
+        extra["error"]["traceback"] = str(traceback.format_tb(exc.__traceback__))
         extra.update(context.data)
 
         self.__logger.error(msg=type(exc).__name__, extra=extra)

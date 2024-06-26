@@ -2,7 +2,6 @@ import asyncio
 from abc import ABC, abstractmethod
 from asyncio import AbstractEventLoop
 from dataclasses import dataclass
-from functools import lru_cache
 from typing import Optional
 
 import aio_pika

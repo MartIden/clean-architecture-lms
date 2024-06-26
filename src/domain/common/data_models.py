@@ -1,9 +1,6 @@
-from dataclasses import dataclass, field
-from typing import Generic, TypeVar, Optional
+from typing import Any, TypeVar
 
 from pydantic import BaseModel
-
-AnswerType = TypeVar("AnswerType")
 
 
 def convert_field_to_camel_case(string: str) -> str:
@@ -13,20 +10,23 @@ def convert_field_to_camel_case(string: str) -> str:
     )
 
 
-class JsonSchema(BaseModel):
+class JsonModel(BaseModel):
     class Config:
         frozen = True
         populate_by_name = True
         alias_generator = convert_field_to_camel_case
 
 
-class AnswerError(JsonSchema):
-    exception: str
+class ErrorAnswer(JsonModel):
+    error_type: str
     msg: str
-    traceback: Optional[str] = None
+    traceback: str | None = None
 
 
-class JsonResponse(Generic[AnswerType], JsonSchema):
+AnswerT = TypeVar("AnswerT", bound=JsonModel)
+
+
+class JsonResponse[AnswerT](JsonModel):
     success: bool = True
-    answer: AnswerType | None = None
-    error: AnswerError | None = None
+    answer: AnswerT | None = None
+    error: ErrorAnswer | None = None
