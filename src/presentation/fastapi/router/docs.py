@@ -7,17 +7,17 @@ from starlette.requests import Request
 from src.infrastructure.ioc.container.application import AppContainer
 from src.infrastructure.settings.stage.app import AppSettings
 
-docs_api = APIRouter(prefix="/docs", tags=["docs"])
+docs_api = APIRouter(tags=["docs"])
 
 
-@docs_api.get("/", include_in_schema=False)
+@docs_api.get("/docs", include_in_schema=False)
 async def get_swagger_documentation():
-    return get_swagger_ui_html(openapi_url="/docs/openapi.json", title="docs")
+    return get_swagger_ui_html(openapi_url="/openapi.json", title="docs")
 
 
 @docs_api.get("/redoc", include_in_schema=False)
 async def get_redoc_documentation():
-    return get_redoc_html(openapi_url="/docs/openapi.json", title="docs")
+    return get_redoc_html(openapi_url="/openapi.json", title="docs")
 
 
 @docs_api.get("/openapi.json", include_in_schema=False)
