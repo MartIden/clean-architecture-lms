@@ -1,10 +1,10 @@
+from src.presentation.rmq.handlers.user.create.handler import CreateUserHandler
 from src.presentation.rmq.init.consumer import RmqHandlersRunnerConsumerImpl
-from src.presentation.rmq.handlers.user.create.factory import CreateUserHandlerFactory
 
 
 class UserNewConsumer(RmqHandlersRunnerConsumerImpl):
 
-    _handlers_factories = [CreateUserHandlerFactory]
+    _handlers_types = [CreateUserHandler]
 
     async def _set_context(self) -> dict:
         return {

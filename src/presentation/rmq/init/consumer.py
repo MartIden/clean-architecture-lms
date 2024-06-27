@@ -6,6 +6,7 @@ from aio_pika.abc import AbstractIncomingMessage
 
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.rmq.init.exceptions import NackInterruptException, InterruptException
+from src.presentation.rmq.init.handlers.abstract_handler import AbstractRmqHandler
 from src.presentation.rmq.init.handlers.factory_method import AbstractRmqHandlerCreator
 from src.presentation.rmq.init.handlers.handlers_runner import HandlersRunner
 
@@ -67,7 +68,7 @@ class AbstractRmqConsumer(IRmqConsumer, ABC):
 
 class RmqHandlersRunnerConsumerImpl(AbstractRmqConsumer, ABC):
 
-    _handlers_factories: Optional[List[Type[AbstractRmqHandlerCreator]]] = None
+    _handlers_types: Optional[List[Type[AbstractRmqHandler]]] = None
 
     async def _set_context(self) -> dict:
         pass
@@ -76,10 +77,9 @@ class RmqHandlersRunnerConsumerImpl(AbstractRmqConsumer, ABC):
         try:
             context = await self._set_context()
             await HandlersRunner(
-                self._message_to_dict(message),
-                self._handlers_factories,
-                self._di_container,
-                context
+                message=self._message_to_dict(message),
+                context=context,
+                handlers_types=self._handlers_types,
             ).run()
         except json.decoder.JSONDecodeError:
             self._logger.info("The message has an invalid JSON structure")

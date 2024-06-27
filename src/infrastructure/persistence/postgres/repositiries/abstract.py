@@ -86,9 +86,11 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
         sql = self.from_table.select(functions.Count("*")).get_sql()
         rows = await self.execute_with_return(text(sql))
 
-        if row := rows[0] if len(rows) else None:
-            if elem := row[0] if len(row) else None:
+        if row := rows[0] if rows else None:
+            if elem := row[0] if row else None:
                 return elem
+
+        return 0
 
     @classmethod
     def _convert_list_to_postgres_array(cls, collection: list[Any]) -> str:

@@ -1,6 +1,8 @@
 import traceback
+from logging import Logger
 from typing import Any, List, Type, Optional
 
+from dependency_injector.wiring import Provide
 from pydantic import ValidationError
 
 
@@ -14,15 +16,13 @@ class HandlersRunner:
     def __init__(
         self,
         message: Any,
-        handlers_factories: List[Type[AbstractRmqHandlerCreator]],
-        di_container: AppContainer,
         context: Optional[dict],
+        handlers_types: List[Type[AbstractRmqHandler]],
+        logger: Logger = Provide[AppContainer.core.logger],
     ):
         self._message = message
-        self._handlers_factories = handlers_factories
-        self._di_container = di_container
-        self._app_settings = self._di_container.core.settings()
-        self._logger = self._di_container.core.logger()
+        self._handlers_types = handlers_types
+        self._logger = logger
         self._context = context
 
     @staticmethod
@@ -81,7 +81,7 @@ class HandlersRunner:
         self._logger.exception(msg=message, extra=extra)
 
     def __exception_create_handler(
-        self, creator: Type[AbstractRmqHandlerCreator], exc: Exception
+        self, creator: Type[AbstractRmqHandler], exc: Exception
     ):
 
         handler_name = type(creator).__name__
@@ -96,17 +96,16 @@ class HandlersRunner:
 
         self._logger.exception(msg=message, extra=extra)
 
-    def __create_handler(self, handler_factory: Type[AbstractRmqHandlerCreator]):
+    def __create_handler(self, handler_factory: Type[AbstractRmqHandler]):
         try:
-            factory = handler_factory(self._message, self._di_container)
-            return factory.create()
+            return handler_factory()
         except Exception as err:
             self.__exception_create_handler(handler_factory, err)
             return
 
     async def __handle(self, handler: AbstractRmqHandler) -> None:
         try:
-            await handler.handle(self._context)
+            await handler.handle(self._message, self._context)
         except SkipHandleException as err:
             self.__skip_exception_handler(handler, err)
         except InterruptException as err:
@@ -123,7 +122,7 @@ class HandlersRunner:
             self.__exception_handler(handler, err)
 
     async def run(self) -> None:
-        for handler_factory in self._handlers_factories:
-            handler = self.__create_handler(handler_factory)
+        for handler_type in self._handlers_types:
+            handler = self.__create_handler(handler_type)
             if handler:
                 await self.__handle(handler)

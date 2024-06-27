@@ -38,5 +38,5 @@ class AbstractRmqHandler(ABC):
         return type(self).__name__
 
     @abstractmethod
-    async def handle(self, context: Optional[dict]) -> None:
+    async def handle(self, message: dict, context: Optional[dict]) -> None:
         pass

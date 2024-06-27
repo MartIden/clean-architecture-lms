@@ -6,15 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      APP_ENV: "dev"
-      POSTGRES_URI: "postgresql+asyncpg://admin:pass@postgres:5432/lms"
-      POSTGRES_SCHEME: "public"
-      RMQ_URI: "amqp://admin:pass@rmq:5672"
-      SHOW_TRACEBACK_IN_RESPONSE: "true"
-      LOGGING_LEVEL: "10"
-      RELOAD: "true"
-      FASTAPI_LOGGING_LEVEL: "10"
+    env_file: "docker.env"
     networks:
       - base
     ports:
@@ -25,9 +17,7 @@ services:
 
   postgres:
     image: postgres
-    environment:
-      POSTGRES_USER: "admin"
-      POSTGRES_PASSWORD: "pass"
+    env_file: "docker.env"
     ports:
       - "5432:5432"
     networks:
@@ -40,9 +30,7 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: "admin"
-      RABBITMQ_DEFAULT_PASS: "pass"
+    env_file: "docker.env"
     networks:
       - base
     restart: unless-stopped
