@@ -1,13 +1,18 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from src.application.service.auth.jwt import IJwtService
 from src.application.service.auth.password import IPasswordService
 from src.application.service.user.crud import IUserCrudService
 from src.domain.auth.exception.incorrect_password import PasswordIsIncorrectError
+from src.domain.user.entity.user import User
 
 
 class IAuthorizationCase(ABC):
-    pass
+    @abstractmethod
+    async def authorize(self, login: str, password: str) -> str: ...
+
+    @abstractmethod
+    async def get_user_by_token(self, token: str) -> User: ...
 
 
 class AuthorizationCase(IAuthorizationCase):
@@ -29,8 +34,12 @@ class AuthorizationCase(IAuthorizationCase):
             raise PasswordIsIncorrectError("Некорректный пароль")
 
         return self.__jwt_service.create({
-            "id": user.id,
+            "id": str(user.id),
             "login": user.login,
             "email": user.email,
             "roles": user.roles,
         })
+
+    async def get_user_by_token(self, token: str) -> User:
+        user_from_token = self.__jwt_service.verify(token)
+        return await self.__user_crud.read_by_login(user_from_token.get("login"))

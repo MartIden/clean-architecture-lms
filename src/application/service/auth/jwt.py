@@ -26,8 +26,4 @@ class JwtService(IJwtService):
         return jwt.encode(data, self.__secret_key, algorithm=self.__algorithm)
 
     def verify(self, token: str) -> dict | None:
-        try:
-            decoded_data = jwt.decode(token, self.__secret_key, algorithms=[self.__algorithm])
-            return decoded_data
-        except jwt.PyJWTError:
-            return None
+        return jwt.decode(token, self.__secret_key, algorithms=[self.__algorithm])

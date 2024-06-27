@@ -1,0 +1,2 @@
+class RolesIncorrectError(Exception):
+    pass

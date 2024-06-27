@@ -1,0 +1,2 @@
+class AuthHeaderIsNotExistError(Exception):
+    pass

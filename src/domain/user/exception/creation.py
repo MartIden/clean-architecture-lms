@@ -1,2 +1,0 @@
-class UserCreationError(Exception):
-    pass

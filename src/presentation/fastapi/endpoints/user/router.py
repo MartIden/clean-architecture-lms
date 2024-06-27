@@ -2,12 +2,23 @@ from fastapi import APIRouter, Depends
 from pydantic import UUID4
 from pypika import Order
 
+from src.domain.auth.dto.auth import JwtInResponse
 from src.domain.common.data_models import JsonResponse
-from src.domain.user.dto.user import UserInCreate, UserInResponse, UserManyInRequest, UsersInResponse, UserInUpdate, \
-    UserInUpdateRequest
-from src.presentation.fastapi.depends.order import get_order
+from src.domain.user.dto.user import (
+    UserInCreate,
+    UserInResponse,
+    UserManyInRequest,
+    UsersInResponse,
+    UserInUpdate,
+    UserInUpdateRequest,
+    UserInLogin
+)
+from src.domain.user.enum.roles import UserRoleEnum
+from src.presentation.depends.auth import has_roles
+from src.presentation.depends.order import get_order
 from src.presentation.fastapi.endpoints.user.controllers.create import CreateUserController
 from src.presentation.fastapi.endpoints.user.controllers.delete import DeleteUserController
+from src.presentation.fastapi.endpoints.user.controllers.login import LoginUserController
 from src.presentation.fastapi.endpoints.user.controllers.read import ReadUserController
 from src.presentation.fastapi.endpoints.user.controllers.read_many import ReadManyUserController
 from src.presentation.fastapi.endpoints.user.controllers.update import UpdateUserController
@@ -46,14 +57,24 @@ async def read_by_id(row_id: UUID4, controller: ReadUserController = Depends()) 
     "/{row_id}",
     response_model=JsonResponse[UserInResponse]
 )
-async def update(row_id: UUID4, request: UserInUpdateRequest, controller: UpdateUserController = Depends()) -> JsonResponse[UserInResponse]:
+async def update(
+    row_id: UUID4, request: UserInUpdateRequest, controller: UpdateUserController = Depends()
+) -> JsonResponse[UserInResponse]:
     user_in_update = UserInUpdate(id=row_id, **request.model_dump())
     return await controller(user_in_update)
 
 
 @user_api.delete(
     "/{row_id}",
-    response_model=JsonResponse[UserInResponse]
+    response_model=JsonResponse[UserInResponse],
 )
 async def delete(row_id: UUID4, controller: DeleteUserController = Depends()) -> JsonResponse[UserInResponse]:
     return await controller(row_id)
+
+
+@user_api.post(
+    "/login",
+    response_model=JsonResponse[JwtInResponse]
+)
+async def login(request: UserInLogin, controller: LoginUserController = Depends()) -> JsonResponse[JwtInResponse]:
+    return await controller(request)

@@ -4,7 +4,7 @@ from pydantic import UUID4
 
 from src.domain.user.dto.user import UserInUpdate, UserInCreate
 from src.domain.user.entity.user import User
-from src.domain.user.exception.creation import UserCreationError
+from src.domain.user.exception.create import UserCreateError
 from src.domain.user.exception.exist import UserIsNotExistsError
 from src.domain.user.ports.user_repo import IUserRepo
 
@@ -46,7 +46,7 @@ class UserCrudService(IUserCrudService):
     async def create(self, data: UserInCreate) -> User:
         if user := await self._repo.create(data):
             return user
-        raise UserCreationError("Не удалось создать пользователя")
+        raise UserCreateError("Не удалось создать пользователя")
 
     async def update(self, data: UserInUpdate) -> User:
         if user := await self._repo.update(data):
@@ -69,7 +69,7 @@ class UserCrudService(IUserCrudService):
     async def read_by_login(self, login: str) -> User:
         if user := await self._repo.read_by_login(login):
             return user
-        raise UserIsNotExistsError(f"Пользователь с id {id_} не найден")
+        raise UserIsNotExistsError(f"Пользователь {login} не найден")
 
     async def count(self) -> int:
         return await self._repo.count()

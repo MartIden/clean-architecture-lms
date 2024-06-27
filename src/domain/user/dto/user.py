@@ -18,6 +18,11 @@ class UserInCreate(JsonModel):
     roles:    list[UserRoleEnum]
 
 
+class UserInLogin(JsonModel):
+    login:    UserLogin
+    password: UserPassword
+
+
 class UserInUpdateRequest(JsonModel):
     login:    Optional[UserLogin] = None
     email:    Optional[UserEmail] = None
