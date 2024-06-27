@@ -16,10 +16,9 @@ RUN apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /install
-COPY poetry.lock .
-COPY pyproject.toml .
+COPY requirements.txt .
 
-RUN pip install poetry==1.8.3 && poetry install
+RUN pip install --no-cache-dir --prefix=/install -r /install/requirements.txt
 
 
 ################
@@ -32,6 +31,9 @@ COPY --from=builder /install /usr/local
 COPY .. /app
 
 WORKDIR /app
+
+ENV PYTHONUNBUFFERED=0
+ENV PYTHONPATH=/app
 
 RUN apt-get clean -y \
   && apt-get update -y \
@@ -49,4 +51,6 @@ RUN apt-get clean -y \
 
 USER romasa464
 
-EXPOSE 5050
+WORKDIR src
+
+CMD [ "python", "manage.py", "api" ]
