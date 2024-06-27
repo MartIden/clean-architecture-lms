@@ -36,6 +36,11 @@ class AppSettings(BaseAppSettings):
 
     RMQ_URI: str = Field(..., validation_alias="RMQ_URI")
 
+    """ JWT """
+    JWT_ALGORITHM: str = "HS256"
+    JWT_EXPIRATION_TIME: int = 30 * 24 * 60 * 60
+    JWT_SECRET_KEY: str = "8q%32h1[_3bB~yg]6#i"
+
     MAX_CONNECTION: int = 10
     SALT: str = "R6^,)7^$==sOT@hs0"
     SHOW_TRACEBACK_IN_RESPONSE: bool = Field(False, validation_alias="SHOW_TRACEBACK_IN_RESPONSE")

@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Type
 
 from pydantic import UUID4
 from pypika import PostgreSQLQuery
@@ -7,12 +6,12 @@ from sqlalchemy import text
 
 from src.domain.user.dto.user import UserInCreate, UserInUpdate
 from src.domain.user.entity.user import User
-from src.domain.user.exceptions.exist import UserIsNotExistsError
 from src.domain.user.ports.user_repo import IUserRepo
 from src.infrastructure.persistence.postgres.repositiries.abstract import AbstractPostgresRepository
 
 
 class UserRepo(AbstractPostgresRepository[UUID4, User], IUserRepo):
+
     _result_model = User
 
     @property
@@ -21,6 +20,7 @@ class UserRepo(AbstractPostgresRepository[UUID4, User], IUserRepo):
 
     async def create(self, schema: UserInCreate) -> User:
         now = int(datetime.now().timestamp())
+
         query = PostgreSQLQuery \
             .into(self.table) \
             .columns(
@@ -44,11 +44,11 @@ class UserRepo(AbstractPostgresRepository[UUID4, User], IUserRepo):
 
         return await self._execute_one(text(query))
 
-    async def update(self, schema: UserInUpdate) -> User:
+    async def update(self, schema: UserInUpdate) -> User | None:
         user = await self.read_one(schema.id)
 
         if not user:
-            raise UserIsNotExistsError(f"User with id {schema.id} is not exist")
+            return
 
         roles = self._convert_list_to_postgres_array(
             collection=[role.value for role in schema.roles or user.roles]
@@ -65,3 +65,10 @@ class UserRepo(AbstractPostgresRepository[UUID4, User], IUserRepo):
 
         await self.execute(text(query))
         return await self.read_one(schema.id)
+
+    async def read_by_login(self, login: str) -> User | None:
+        sql = self.from_table.select('*')\
+            .where(self.table.login == login)\
+            .get_sql()
+
+        return await self._execute_one(text(sql))

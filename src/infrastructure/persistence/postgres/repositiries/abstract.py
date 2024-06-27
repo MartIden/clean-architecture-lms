@@ -67,13 +67,16 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
             await session.execute(sql)
             await session.commit()
 
-    async def read_one(self, id_: IdT) -> ResultT:
+    async def read_one(self, id_: IdT) -> ResultT | None:
         sql = self.from_table.select('*').where(self.table.id == id_).get_sql()
         return await self._execute_one(text(sql))
 
-    async def delete(self, id_: IdT) -> ResultT:
-        sql = self.from_table.delete().where(self.table.id == id_).returning("*").get_sql()
-        return await self._execute_one(text(sql))
+    async def delete(self, id_: IdT) -> ResultT | None:
+        user = await self.read_one(id_)
+
+        if user:
+            sql = self.from_table.delete().where(self.table.id == id_).returning("*").get_sql()
+            return await self._execute_one(text(sql))
 
     async def read_many(self, limit: int, offset: int, order: Order, order_by="updated_at") -> Iterable[ResultT]:
         sql = self.from_table.select('*').orderby(order_by, order=order)[offset:limit].get_sql()

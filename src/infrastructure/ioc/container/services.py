@@ -1,14 +1,35 @@
 from dependency_injector import containers, providers
 from dependency_injector.providers import Factory
 
+from src.application.service.auth.jwt import IJwtService
+from src.application.service.auth.password import IPasswordService
 from src.application.service.user.crud import IUserCrudService, UserCrudService
+from src.application.use_case.auth.authorization import IAuthorizationCase, AuthorizationCase
+from src.application.use_case.user.creation import IUserCreationCase, UserCreationCase
 from src.infrastructure.ioc.container.core import CoreContainer
 from src.infrastructure.ioc.container.infrastructure import InfrastructureContainer
-from src.infrastructure.persistence.postgres.repositiries.user import UserRepo
+from src.infrastructure.ioc.factory.jwt import JwtServiceFactory
+from src.infrastructure.ioc.factory.password import PasswordServiceFactory
 
 
 class ServicesContainer(containers.DeclarativeContainer):
+
     core: CoreContainer = providers.Container(CoreContainer)
     infrastructure: InfrastructureContainer = providers.Container(InfrastructureContainer)
 
-    user_crud: Factory[IUserCrudService] = providers.Factory(UserCrudService, infrastructure.user_repo.provided)
+    user_crud_service: Factory[IUserCrudService] = providers.Factory(UserCrudService, infrastructure.user_repo.provided)
+    password_service: Factory[IPasswordService] = providers.Callable(PasswordServiceFactory.create)
+    jwt_service: Factory[IJwtService] = providers.Callable(JwtServiceFactory(core.settings()).create)
+
+    auth_case: Factory[IAuthorizationCase] = providers.Factory(
+        AuthorizationCase,
+        user_crud_service.provided,
+        password_service.provided,
+        jwt_service.provided
+    )
+
+    user_creation_case: Factory[IUserCreationCase] = providers.Factory(
+        UserCreationCase,
+        password_service.provided,
+        user_crud_service.provided
+    )
