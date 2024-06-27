@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from fastapi import FastAPI, APIRouter, Depends
 
-from src.presentation.depends.request_json_logger import RequestJSONLoggerDepend
+from src.presentation.fastapi.depends.request_json_logger import RequestJSONLoggerDepend
 from src.presentation.fastapi.init.setter.interfase import IAppSetter
 from src.presentation.fastapi.router.docs import docs_api
 from src.presentation.fastapi.router.urls import api_router

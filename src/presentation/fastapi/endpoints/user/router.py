@@ -13,9 +13,7 @@ from src.domain.user.dto.user import (
     UserInUpdateRequest,
     UserInLogin
 )
-from src.domain.user.enum.roles import UserRoleEnum
-from src.presentation.depends.auth import has_roles
-from src.presentation.depends.order import get_order
+from src.presentation.fastapi.depends.order import get_order
 from src.presentation.fastapi.endpoints.user.controllers.create import CreateUserController
 from src.presentation.fastapi.endpoints.user.controllers.delete import DeleteUserController
 from src.presentation.fastapi.endpoints.user.controllers.login import LoginUserController
