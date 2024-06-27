@@ -8,11 +8,13 @@ services:
       dockerfile: Dockerfile
     environment:
       APP_ENV: "dev"
-      POSTGRES_URI: "postgresql+asyncpg://admin:pass@localhost:5432/lms"
+      POSTGRES_URI: "postgresql+asyncpg://admin:pass@postgres:5432/lms"
       POSTGRES_SCHEME: "public"
-      RMQ_URI: "amqp://admin:pass@localhost:5672"
+      RMQ_URI: "amqp://admin:pass@rmq:5672"
       SHOW_TRACEBACK_IN_RESPONSE: "true"
       LOGGING_LEVEL: "10"
+      RELOAD: "true"
+      FASTAPI_LOGGING_LEVEL: "10"
     networks:
       - base
     ports:

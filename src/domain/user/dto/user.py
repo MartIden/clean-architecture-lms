@@ -72,5 +72,5 @@ class UserManyInRequest(JsonModel):
 
     @field_validator("limit")
     def double(cls, v: int) -> int:
-        assert v < 100
+        assert v <= 100, "Максимальное количество записей, которое можно получить за раз - 100s"
         return v

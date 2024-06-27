@@ -16,7 +16,6 @@ class ReadManyUserController(IController[UserManyInRequest, JsonResponse[UsersIn
     def __init__(
         self,
         user_crud: IUserCrudService = Depends(Provide[AppContainer.services.user_crud_service]),
-        auth_case_factory: IAuthorizationCase = Depends(Provide[AppContainer.services.auth_case])
     ):
         self.__user_crud = user_crud
 

@@ -24,7 +24,7 @@ class FastApiRunner(IFastApiRunner):
             host=self.__app_settings.HOST,
             port=self.__app_settings.PORT,
             reload=self.__app_settings.RELOAD,
-            log_level=self.__app_settings.FASTAPI_LOGGING_LEVEL
+            log_level=self.__app_settings.FASTAPI_LOGGING_LEVEL,
         )
 
 
