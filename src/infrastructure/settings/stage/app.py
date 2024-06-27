@@ -50,7 +50,7 @@ class AppSettings(BaseAppSettings):
     ]
 
     LOGGING_LEVEL: int = Field(20, validation_alias="LOGGING_LEVEL")
-    FASTAPI_LOGGING_LEVEL: int = Field(30, validation_alias="LOGGING_LEVEL")
+    FASTAPI_LOGGING_LEVEL: int = Field(50, validation_alias="FASTAPI_LOGGING_LEVEL")
 
     @property
     def fastapi_kwargs(self) -> Dict[str, Any]:

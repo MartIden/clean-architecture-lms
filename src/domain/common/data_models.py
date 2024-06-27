@@ -20,7 +20,7 @@ class JsonModel(BaseModel):
 class ErrorAnswer(JsonModel):
     error_type: str
     msg: str
-    traceback: str | None = None
+    traceback: str | list[str] | None = None
 
 
 AnswerT = TypeVar("AnswerT", bound=JsonModel)

@@ -3,6 +3,7 @@ from fastapi import Depends
 from pydantic import UUID4
 
 from src.application.service.user.crud import IUserCrudService
+from src.application.use_case.auth.authorization import IAuthorizationCase
 from src.domain.common.data_models import JsonResponse
 from src.domain.user.dto.user import UserInCreate, UserInResponse, UserManyInRequest, UsersInResponse
 from src.infrastructure.ioc.container.application import AppContainer
@@ -14,7 +15,8 @@ class ReadManyUserController(IController[UserManyInRequest, JsonResponse[UsersIn
 
     def __init__(
         self,
-        user_crud: IUserCrudService = Depends(Provide[AppContainer.services.user_crud_service])
+        user_crud: IUserCrudService = Depends(Provide[AppContainer.services.user_crud_service]),
+        auth_case_factory: IAuthorizationCase = Depends(Provide[AppContainer.services.auth_case])
     ):
         self.__user_crud = user_crud
 

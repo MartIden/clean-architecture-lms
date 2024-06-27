@@ -1,6 +1,8 @@
 import asyncio
 import sys
 
+import fastapi
+
 import src
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.rmq.init.run import RmqRunnerFactory
@@ -34,7 +36,7 @@ def run_by_command(argv: list[str], runners_map: dict) -> None:
 
 if __name__ == "__main__":
     container = AppContainer()
-    container.wire(packages=[src])
+    container.wire(packages=[src, fastapi])
 
     run_by_command(
         argv=sys.argv,

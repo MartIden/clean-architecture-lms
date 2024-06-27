@@ -6,7 +6,7 @@ from src.application.service.user.crud import IUserCrudService
 from src.domain.common.data_models import JsonResponse
 from src.domain.user.dto.user import UserInResponse
 from src.domain.user.entity.user import User
-from src.domain.user.enum.roles import UserRoleEnum
+from src.domain.user.enum.roles import UserRoleEnum, ALL_ROLES
 from src.domain.user.exception.delete import UserDeleteError
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.fastapi.depends.auth import has_roles
@@ -18,7 +18,7 @@ class DeleteUserController(IController[UUID4, JsonResponse[UserInResponse]]):
     def __init__(
         self,
         user_crud: IUserCrudService = Depends(Provide[AppContainer.services.user_crud_service]),
-        current_user: User = Depends(has_roles([UserRoleEnum.AUTHOR, UserRoleEnum.TEACHER, UserRoleEnum.STUDENT]))
+        current_user: User = Depends(has_roles(ALL_ROLES))
     ):
         self.__user_crud = user_crud
         self.__current_user = current_user

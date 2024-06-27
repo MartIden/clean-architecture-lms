@@ -6,3 +6,11 @@ class UserRoleEnum(str, Enum):
     AUTHOR: str = "AUTHOR"
     TEACHER: str = "TEACHER"
     ADMIN: str = "ADMIN"
+
+
+ALL_ROLES = {
+    UserRoleEnum.ADMIN,
+    UserRoleEnum.TEACHER,
+    UserRoleEnum.AUTHOR,
+    UserRoleEnum.STUDENT,
+}

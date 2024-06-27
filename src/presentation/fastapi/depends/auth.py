@@ -13,7 +13,7 @@ from src.infrastructure.ioc.container.application import AppContainer
 
 
 def get_token(authorization: Annotated[str, Header()],) -> str:
-    if not authorization and "Bearer" not in authorization:
+    if not authorization or "Bearer" not in authorization:
         raise AuthHeaderIsNotExistError("Отсутствует валидный заголовок авторизации")
     return authorization.replace("Bearer ", "")
 
@@ -32,6 +32,7 @@ def has_roles(roles: list[UserRoleEnum]) -> Callable:
             return user
 
         if not set(roles) & set(user.roles):
-            raise RolesIncorrectError(f"У пользователя {user.login} нет доступа")
+            raise RolesIncorrectError(f"У пользователя {user.login} нет требуемой роли")
         return user
+
     return role_validator

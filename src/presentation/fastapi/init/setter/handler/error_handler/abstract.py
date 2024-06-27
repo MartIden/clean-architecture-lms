@@ -24,13 +24,14 @@ class AbstractErrorHandler(IErrorHandler, ABC):
         self.__app_settings = app_settings
 
     def _base_handle_logic(self, exc: HTTPException) -> JSONResponse:
+
         error = {
             "errorType": type(exc).__name__,
             "msg": str(exc),
         }
 
         if self.__app_settings.SHOW_TRACEBACK_IN_RESPONSE:
-            error["traceback"] = str(traceback.format_tb(exc.__traceback__))
+            error["traceback"] = traceback.format_tb(exc.__traceback__)
 
         extra = {
             "success": False,
