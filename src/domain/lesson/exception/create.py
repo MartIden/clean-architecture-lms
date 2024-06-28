@@ -1,0 +1,2 @@
+class LessonCreateError(Exception):
+    pass

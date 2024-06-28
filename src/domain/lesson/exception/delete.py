@@ -1,0 +1,2 @@
+class LessonDeleteError(Exception):
+    pass

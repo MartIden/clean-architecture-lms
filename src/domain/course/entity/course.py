@@ -17,10 +17,9 @@ class Course(Entity[UUID4]):
         if data:
             return cls(
                 id=data.get("id"),
-                login=data.get("title"),
-                email=data.get("description"),
-                roles=data.get("cover"),
-                password=data.get("password"),
+                title=data.get("title"),
+                description=data.get("description"),
+                cover=data.get("cover"),
                 created_at=data.get("created_at"),
                 updated_at=data.get("updated_at")
             )

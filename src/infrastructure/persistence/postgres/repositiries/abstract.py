@@ -37,7 +37,7 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
         return cls._result_model(**row._mapping)  # noqa
 
     @classmethod
-    def _convert_to_models(cls, rows: Iterable[Row]) -> Iterable[ResultT]:
+    def _convert_to_models(cls, rows: Iterable[Row]) -> Sequence[ResultT]:
         return [cls._convert_to_model(row) for row in rows]
 
     async def _execute_one(self, sql: text) -> ResultT | None:
@@ -49,7 +49,7 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
             if row:
                 return self._convert_to_model(row)
 
-    async def _execute_many(self, sql: text) -> Iterable[ResultT]:
+    async def _execute_many(self, sql: text) -> Sequence[ResultT]:
         async with self._session_maker() as session:
             result = await session.execute(sql)
             await session.commit()
@@ -78,7 +78,7 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
             sql = self.from_table.delete().where(self.table.id == id_).returning("*").get_sql()
             return await self._execute_one(text(sql))
 
-    async def read_many(self, limit: int, offset: int, order: Order, order_by="updated_at") -> Iterable[ResultT]:
+    async def read_many(self, limit: int, offset: int, order: Order, order_by="updated_at") -> Sequence[ResultT]:
         sql = self.from_table.select('*').orderby(order_by, order=order)[offset:limit].get_sql()
         return await self._execute_many(text(sql))
 
@@ -93,6 +93,6 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
         return 0
 
     @classmethod
-    def _convert_list_to_postgres_array(cls, collection: list[Any]) -> str:
+    def _convert_list_to_postgres_array(cls, collection: Sequence[Any]) -> str:
         roles = ",".join([f"{str(item)}" for item in collection])
         return '{{{0}}}'.format(roles)

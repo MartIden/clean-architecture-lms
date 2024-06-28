@@ -1,0 +1,2 @@
+class LessonIsNotExistsError(Exception):
+    pass

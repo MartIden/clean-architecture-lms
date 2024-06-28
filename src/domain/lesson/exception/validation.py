@@ -1,0 +1,2 @@
+class LessonValidationError(Exception):
+    pass

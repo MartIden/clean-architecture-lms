@@ -1,0 +1,2 @@
+class LessonUpdateError(Exception):
+    pass

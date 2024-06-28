@@ -5,4 +5,4 @@ class Limit(IntVO):
 
     @classmethod
     def _validate(cls, value: int) -> None:
-        assert value < 100, "Максимальное количество записей, которое можно получить за раз - 100"
+        assert value <= 100, "Максимальное количество записей, которое можно получить за раз - 100"
