@@ -38,6 +38,9 @@ if __name__ == "__main__":
     container = AppContainer()
     container.wire(packages=[src, fastapi])
 
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
     run_by_command(
         argv=sys.argv,
         runners_map={

@@ -1,5 +1,6 @@
+import asyncio
 import traceback
-from abc import ABC, abstractmethod
+from abc import ABC
 from logging import INFO, Logger
 from typing import Any, Optional
 
@@ -7,37 +8,19 @@ from aio_pika import Message
 from aio_pika.abc import DeliveryMode
 from pydantic import BaseModel
 
-from src.infrastructure.rmq.connector import RmqConnectorImpl
+from src.domain.common.ports.publisher import IPublisher
+from src.infrastructure.rmq.connector import RmqConnector
 from src.infrastructure.settings.stage.app import AppSettings
 
 
-class IRmqPublisher(ABC):
+class AbstractRmqPublisher(IPublisher, ABC):
 
-    @property
-    @abstractmethod
-    def publisher_class(self) -> str: ...
-
-    @property
-    @abstractmethod
-    def _exchange_name(self) -> Optional[str]:
-        pass
-
-    @abstractmethod
-    async def publish(self, message: str) -> Any:
-        pass
-
-    @abstractmethod
-    async def publish_model(self, message: BaseModel) -> Any:
-        pass
-
-    @abstractmethod
-    async def _publish(self, message: bytes) -> Any:
-        pass
-
-
-class RmqPublisherImpl(IRmqPublisher, ABC):
-
-    def __init__(self, connector: RmqConnectorImpl, app_settings: AppSettings, logger: Logger):
+    def __init__(
+        self,
+        connector: RmqConnector,
+        app_settings: AppSettings,
+        logger: Logger,
+    ):
         self._connector = connector
         self._app_settings = app_settings
         self._logger = logger
@@ -49,7 +32,8 @@ class RmqPublisherImpl(IRmqPublisher, ABC):
     async def _publish(self, message: bytes) -> Any:
         message = Message(message, delivery_mode=DeliveryMode.PERSISTENT)
 
-        async with self._connector.channel_pool.acquire() as channel:
+        connection = await self._connector.get_single_connection()
+        async with connection.channel() as channel:
             exchange = await channel.get_exchange(self._exchange_name)
             return await exchange.publish(message, routing_key=self._exchange_name)
 
@@ -64,7 +48,7 @@ class RmqPublisherImpl(IRmqPublisher, ABC):
             self._log_err_message(message, exc)
 
     async def publish_model(self, message: BaseModel) -> Any:
-        bytes_message = message.json().encode("utf-8")
+        bytes_message = message.model_dump_json().encode("utf-8")
         return await self._publish(bytes_message)
 
     def _log_publisher(

@@ -1,11 +1,9 @@
-import asyncio
-
 from src.infrastructure.settings.stage.app import AppSettings
 from src.infrastructure.rmq.connector import (
     IRmqConnectorFactory,
     IRmqConnector,
     RmqConnectionSettings,
-    RmqConnectorImpl
+    RmqConnector
 )
 
 
@@ -15,6 +13,5 @@ class RmqConnectorFactory(IRmqConnectorFactory):
         self.__settings = settings
 
     def create(self) -> IRmqConnector:
-        loop = asyncio.get_event_loop()
-        settings = RmqConnectionSettings(amqp_uri=self.__settings.RMQ_URI, loop=loop)
-        return RmqConnectorImpl(settings)
+        settings = RmqConnectionSettings(amqp_uri=self.__settings.RMQ_URI)
+        return RmqConnector(settings)

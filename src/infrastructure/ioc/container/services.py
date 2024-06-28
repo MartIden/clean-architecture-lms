@@ -6,10 +6,12 @@ from src.application.service.auth.password import IPasswordService
 from src.application.service.user.crud import IUserCrudService, UserCrudService
 from src.application.use_case.auth.authorization import IAuthorizationCase, AuthorizationCase
 from src.application.use_case.user.creation import IUserCreationCase, UserCreationCase
+from src.domain.common.ports.publisher import IPublisher
 from src.infrastructure.ioc.container.core import CoreContainer
 from src.infrastructure.ioc.container.infrastructure import InfrastructureContainer
 from src.infrastructure.ioc.factory.jwt import JwtServiceFactory
 from src.infrastructure.ioc.factory.password import PasswordServiceFactory
+from src.presentation.rmq.publishers.user_new import UserNewPublisher
 
 
 class ServicesContainer(containers.DeclarativeContainer):
@@ -28,8 +30,16 @@ class ServicesContainer(containers.DeclarativeContainer):
         jwt_service.provided
     )
 
+    user_new_publisher: Factory[IPublisher] = providers.Factory(
+        UserNewPublisher,
+        infrastructure.rmq_connector.provided,
+        core.settings.provided,
+        core.logger.provided,
+    )
+
     user_creation_case: Factory[IUserCreationCase] = providers.Factory(
         UserCreationCase,
         password_service.provided,
-        user_crud_service.provided
+        user_crud_service.provided,
+        user_new_publisher.provided,
     )

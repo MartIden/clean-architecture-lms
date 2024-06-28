@@ -13,10 +13,6 @@ from async_lru import alru_cache
 
 class IRmqConnector(ABC):
 
-    @property
-    @abstractmethod
-    def _event_loop(self) -> AbstractEventLoop: ...
-
     @abstractmethod
     async def get_connection(self) -> AbstractConnection: ...
 
@@ -43,24 +39,18 @@ class IRmqConnector(ABC):
 @dataclass(slots=True, frozen=True)
 class RmqConnectionSettings:
     amqp_uri: str
-    loop: Optional[AbstractEventLoop] = None
     pool_size = 10
     connection_size = 10
     max_messages_in_parallel = 100
 
 
-class RmqConnectorImpl(IRmqConnector):
+class RmqConnector(IRmqConnector):
 
     def __init__(self, connection_settings: RmqConnectionSettings):
         self._uri = connection_settings.amqp_uri
-        self._loop = connection_settings.loop
         self._pool_size = connection_settings.pool_size
         self._connection_size = connection_settings.connection_size
         self._max_messages_in_parallel = connection_settings.max_messages_in_parallel
-
-    @property
-    def _event_loop(self) -> AbstractEventLoop:
-        return self._loop if self._loop else asyncio.get_event_loop()
 
     async def get_connection(self) -> AbstractConnection:
         return await aio_pika.connect(url=self._uri)
@@ -75,7 +65,7 @@ class RmqConnectorImpl(IRmqConnector):
             await channel.set_qos(prefetch_count=self._max_messages_in_parallel)
             return channel
 
-    @alru_cache(maxsize=10)
+    @alru_cache(maxsize=1)
     async def get_single_channel(self) -> Channel:
         async with self.connection_pool.acquire() as connection:
             channel = await connection.channel()
