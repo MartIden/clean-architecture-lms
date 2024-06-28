@@ -3,8 +3,14 @@ from pydantic import UUID4
 
 from src.domain.common.data_models import JsonResponse
 from src.domain.common.enum.order import Order
-from src.domain.lesson.dto.lesson import LessonInResponse, LessonInCreate, LessonsInResponse, LessonManyInRequest, \
-    LessonInUpdateRequest, LessonInUpdate
+from src.domain.lesson.dto.lesson import (
+    LessonInResponse,
+    LessonInCreate,
+    LessonsInResponse,
+    LessonManyInRequest,
+    LessonInUpdateRequest,
+    LessonInUpdate
+)
 from src.presentation.fastapi.depends.order import get_order
 from src.presentation.fastapi.endpoints.lesson.controllers.create import CreateLessonController
 from src.presentation.fastapi.endpoints.lesson.controllers.delete import DeleteLessonController
