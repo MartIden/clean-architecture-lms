@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file: "docker.env"
+    env_file: "./docker.env"
     networks:
       - base
     ports:
@@ -17,7 +17,7 @@ services:
 
   postgres:
     image: postgres
-    env_file: "docker.env"
+    env_file: "./docker.env"
     ports:
       - "5432:5432"
     networks:
@@ -30,7 +30,7 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    env_file: "docker.env"
+    env_file: "./docker.env"
     networks:
       - base
     restart: unless-stopped
