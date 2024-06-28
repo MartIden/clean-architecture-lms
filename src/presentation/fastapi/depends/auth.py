@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Annotated, Callable
 
 from dependency_injector.providers import Factory
@@ -5,6 +6,7 @@ from dependency_injector.wiring import Provide
 from fastapi import Depends, Header
 
 from src.application.use_case.auth.authorization import IAuthorizationCase
+from src.domain.auth.exception.expired import JwtExpiredError
 from src.domain.auth.exception.header import AuthHeaderIsNotExistError
 from src.domain.auth.exception.roles import RolesIncorrectError
 from src.domain.user.entity.user import User
@@ -23,6 +25,12 @@ async def get_current_user(
     auth_case_factory: Factory[IAuthorizationCase] = Depends(Provide[AppContainer.services.auth_case])
 ) -> User:
     auth_case = auth_case_factory.provider()
+    jwt_state = auth_case.decode_token(token)
+
+    if exp := jwt_state.get("exp"):
+        if exp < datetime.now().timestamp():
+            raise JwtExpiredError("Токен истек")
+
     return await auth_case.get_user_by_token(token)
 
 

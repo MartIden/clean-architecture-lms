@@ -5,6 +5,7 @@ from pydantic import UUID4
 from pypika import PostgreSQLQuery, Table, JoinType, functions
 from sqlalchemy import text
 
+from src.domain.common.enum.order import Order
 from src.domain.course.dto.course import CourseInCreate, CourseInUpdate
 from src.domain.course.entity.course import Course
 from src.domain.course.port.course_repo import ICourseRepo
@@ -60,7 +61,7 @@ class CourseRepo(AbstractPostgresRepository[UUID4, Course], ICourseRepo):
         await self.execute(text(query))
         return await self.read_one(schema.id)
 
-    async def read_by_user_id(self, id_: UUID4) -> Sequence[Course]:
+    async def read_by_user_id(self, id_: UUID4, limit: int, offset: int, order: Order, order_by: str) -> Sequence[Course]:
         users_courses_table = Table("users_courses")
         users_table = Table("users")
 
@@ -77,7 +78,9 @@ class CourseRepo(AbstractPostgresRepository[UUID4, Course], ICourseRepo):
             .on(self.table.id == users_courses_table.course_id)
             .join(users_table, JoinType.left)
             .on(users_table.id == users_courses_table.user_id)
-            .where(users_table.id == id_).get_sql()
+            .where(users_table.id == id_)
+            .orderby(order_by, order=order)[offset:limit]
+            .get_sql()
         )
 
         return await self._execute_many(text(sql))
@@ -95,9 +98,4 @@ class CourseRepo(AbstractPostgresRepository[UUID4, Course], ICourseRepo):
         )
 
         rows = await self.execute_with_return(text(sql))
-
-        if row := rows[0] if rows else None:
-            if elem := row[0] if row else None:
-                return elem
-
-        return 0
+        return self._get_counter(rows)

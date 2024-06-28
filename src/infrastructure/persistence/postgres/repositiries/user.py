@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Sequence
 
 from pydantic import UUID4
-from pypika import PostgreSQLQuery, Table, JoinType
+from pypika import PostgreSQLQuery, Table, JoinType, functions
 from sqlalchemy import text
 
 from src.domain.user.dto.user import UserInCreate, UserInUpdate
@@ -74,7 +74,7 @@ class UserRepo(AbstractPostgresRepository[UUID4, User], IUserRepo):
 
         return await self._execute_one(text(sql))
 
-    async def read_by_course_id(self, id_: UUID4) -> Sequence[User]:
+    async def read_by_course_id(self, id_: UUID4, limit: int, offset: int, order: str, order_by: str) -> Sequence[User]:
         users_courses_table = Table("users_courses")
         courses_table = Table("courses")
 
@@ -96,3 +96,19 @@ class UserRepo(AbstractPostgresRepository[UUID4, User], IUserRepo):
         )
 
         return await self._execute_many(text(sql))
+
+    async def count_by_course_id(self, id_: UUID4) -> int:
+        users_courses_table = Table("users_courses")
+        courses_table = Table("courses")
+
+        sql = (
+            self.from_table.select(functions.Count("*"))
+            .join(users_courses_table, JoinType.left)
+            .on(self.table.id == users_courses_table.user_id)
+            .join(courses_table, JoinType.left)
+            .on(users_courses_table.course_id == courses_table.id)
+            .where(courses_table.id == id_).get_sql()
+        )
+
+        rows = await self.execute_with_return(text(sql))
+        return self._get_counter(rows)

@@ -11,6 +11,8 @@ from src.domain.lesson.dto.lesson import (
     LessonInUpdateRequest,
     LessonInUpdate
 )
+from src.domain.user.enum.roles import ALL_ROLES
+from src.presentation.fastapi.depends.auth import has_roles
 from src.presentation.fastapi.depends.order import get_order
 from src.presentation.fastapi.endpoints.lesson.controllers.create import CreateLessonController
 from src.presentation.fastapi.endpoints.lesson.controllers.delete import DeleteLessonController
@@ -19,7 +21,7 @@ from src.presentation.fastapi.endpoints.lesson.controllers.read_by_course import
 from src.presentation.fastapi.endpoints.lesson.controllers.read_many import ReadManyLessonController
 from src.presentation.fastapi.endpoints.lesson.controllers.update import UpdateLessonController
 
-lesson_api = APIRouter(prefix="/lesson", tags=["lesson"])
+lesson_api = APIRouter(prefix="/lesson", tags=["lesson"], dependencies=[Depends(has_roles(ALL_ROLES))])
 
 
 @lesson_api.post(

@@ -1,0 +1,2 @@
+class JwtExpiredError(Exception):
+    pass

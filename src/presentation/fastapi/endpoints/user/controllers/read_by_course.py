@@ -1,15 +1,14 @@
 from dependency_injector.wiring import Provide
 from fastapi import Depends
-from pydantic import UUID4
 
 from src.application.service.user.crud import IUserCrudService
 from src.domain.common.data_models import JsonResponse
-from src.domain.user.dto.user import UserInResponse, UsersInResponse
+from src.domain.user.dto.user import UserInResponse, UsersInResponse, UserByCourseManyInRequest
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.fastapi.endpoints.controller_interface import IController
 
 
-class ReadUserByCourseController(IController[UUID4, JsonResponse[UsersInResponse]]):
+class ReadUserByCourseController(IController[UserByCourseManyInRequest, JsonResponse[UsersInResponse]]):
 
     def __init__(
         self,
@@ -17,12 +16,20 @@ class ReadUserByCourseController(IController[UUID4, JsonResponse[UsersInResponse
     ):
         self.__user_crud = user_crud
 
-    async def __call__(self, request: UUID4) -> JsonResponse[UsersInResponse]:
-        users = await self.__user_crud.read_by_course_id(request)
+    async def __call__(self, request: UserByCourseManyInRequest) -> JsonResponse[UsersInResponse]:
+        users = await self.__user_crud.read_by_course_id(
+            id_=request.id,
+            limit=request.limit,
+            offset=request.offset,
+            order=request.order,
+            order_by="created_at"
+        )
+
+        count = await self.__user_crud.count_by_course_id(request.id)
 
         return JsonResponse[UsersInResponse](
             answer=UsersInResponse(
                 rows=[UserInResponse.from_user(user) for user in users],
-                count=len(users)
+                count=count
             )
         )

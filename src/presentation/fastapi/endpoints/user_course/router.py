@@ -11,6 +11,8 @@ from src.domain.course.dto.user_course import (
     UserCourseInUpdateRequest,
     UserCourseInUpdate
 )
+from src.domain.user.enum.roles import ALL_ROLES
+from src.presentation.fastapi.depends.auth import has_roles
 from src.presentation.fastapi.depends.order import get_order
 from src.presentation.fastapi.endpoints.user_course.controllers.create import CreateUserCourseController
 from src.presentation.fastapi.endpoints.user_course.controllers.delete import DeleteUserCourseController
@@ -20,7 +22,7 @@ from src.presentation.fastapi.endpoints.user_course.controllers.read_by_user imp
 from src.presentation.fastapi.endpoints.user_course.controllers.read_many import ReadManyUserCourseController
 from src.presentation.fastapi.endpoints.user_course.controllers.update import UpdateUserCourseController
 
-user_course_api = APIRouter(prefix="/user-course", tags=["user_course"])
+user_course_api = APIRouter(prefix="/user-course", tags=["user_course"], dependencies=[Depends(has_roles(ALL_ROLES))])
 
 @user_course_api.post(
     "",

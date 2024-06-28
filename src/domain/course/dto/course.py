@@ -56,3 +56,10 @@ class CourseManyInRequest(JsonModel):
     limit:  Limit
     offset: int
     order:  Order
+
+
+class CourseByUserManyInRequest(JsonModel):
+    id: UUID4
+    limit:  Limit
+    offset: int
+    order:  Order

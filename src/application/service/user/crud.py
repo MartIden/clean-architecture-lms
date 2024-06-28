@@ -36,10 +36,16 @@ class IUserCrudService(ABC):
         pass
 
     @abstractmethod
-    async def read_by_course_id(self, id_: UUID4) -> Sequence[User]: ...
+    async def read_by_course_id(
+        self, id_: UUID4, limit: int, offset: int, order: str, order_by: str
+    ) -> Sequence[User]: ...
+
+    @abstractmethod
+    async def count_by_course_id(self, id_: UUID4) -> int: ...
 
     @abstractmethod
     async def count(self) -> int: ...
+
 
 
 class UserCrudService(IUserCrudService):
@@ -67,7 +73,7 @@ class UserCrudService(IUserCrudService):
             return user
         raise UserIsNotExistsError(f"Пользователь с id {id_} не найден")
 
-    async def read_many(self, limit: int, offset: int, order: str, order_by: str) -> list[User]:
+    async def read_many(self, limit: int, offset: int, order: str, order_by: str) -> Sequence[User]:
         return await self._repo.read_many(limit, offset, order, order_by)
 
     async def read_by_login(self, login: str) -> User:
@@ -78,5 +84,10 @@ class UserCrudService(IUserCrudService):
     async def count(self) -> int:
         return await self._repo.count()
 
-    async def read_by_course_id(self, id_: UUID4) -> Sequence[User]:
-        return await self._repo.read_by_course_id(id_)
+    async def read_by_course_id(
+        self, id_: UUID4, limit: int, offset: int, order: str, order_by: str
+    ) -> Sequence[User]:
+        return await self._repo.read_by_course_id(id_, limit, offset, order, order_by)
+
+    async def count_by_course_id(self, id_: UUID4) -> int:
+        return await self._repo.count_by_course_id(id_)

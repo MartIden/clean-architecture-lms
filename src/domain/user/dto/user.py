@@ -65,3 +65,10 @@ class UserManyInRequest(JsonModel):
     limit:  Limit
     offset: int
     order:  Order
+
+
+class UserByCourseManyInRequest(JsonModel):
+    id: UUID4
+    limit:  Limit
+    offset: int
+    order:  Order

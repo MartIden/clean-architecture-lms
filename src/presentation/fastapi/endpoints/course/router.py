@@ -3,8 +3,17 @@ from pydantic import UUID4
 
 from src.domain.common.data_models import JsonResponse
 from src.domain.common.enum.order import Order
-from src.domain.course.dto.course import CourseInCreate, CourseInResponse, CoursesInResponse, CourseManyInRequest, \
-    CourseInUpdateRequest, CourseInUpdate
+from src.domain.course.dto.course import (
+    CourseInCreate,
+    CourseInResponse,
+    CoursesInResponse,
+    CourseManyInRequest,
+    CourseInUpdateRequest,
+    CourseInUpdate,
+    CourseByUserManyInRequest
+)
+from src.domain.user.enum.roles import ALL_ROLES
+from src.presentation.fastapi.depends.auth import has_roles
 from src.presentation.fastapi.depends.order import get_order
 from src.presentation.fastapi.endpoints.course.controllers.create import CreateCourseController
 from src.presentation.fastapi.endpoints.course.controllers.delete import DeleteCourseController
@@ -13,7 +22,7 @@ from src.presentation.fastapi.endpoints.course.controllers.read_by_user import R
 from src.presentation.fastapi.endpoints.course.controllers.read_many import ReadManyCourseController
 from src.presentation.fastapi.endpoints.course.controllers.update import UpdateCourseController
 
-course_api = APIRouter(prefix="/course", tags=["course"])
+course_api = APIRouter(prefix="/course", tags=["course"], dependencies=[Depends(has_roles(ALL_ROLES))])
 
 
 @course_api.post(
@@ -42,9 +51,19 @@ async def read_many(
     response_model=JsonResponse[CoursesInResponse],
 )
 async def read_by_user(
-    row_id: UUID4, controller: ReadByUserCourseController = Depends()
+    row_id: UUID4,
+    limit: int,
+    offset: int,
+    order: Order = Depends(get_order),
+    controller: ReadByUserCourseController = Depends()
 ) -> JsonResponse[CoursesInResponse]:
-    return await controller(row_id)
+    request = CourseByUserManyInRequest(
+        id=row_id,
+        limit=limit,
+        offset=offset,
+        order=order
+    )
+    return await controller(request)
 
 
 @course_api.get(
