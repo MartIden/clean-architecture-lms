@@ -1,10 +1,9 @@
 from fastapi import APIRouter
 
+from src.presentation.fastapi.endpoints.course.router import course_api
 from src.presentation.fastapi.endpoints.user.router import user_api
 
 """ API ROUTER """
 api_router = APIRouter(prefix="/api/v1", tags=["API V1"])
 api_router.include_router(user_api)
-
-
-admin_router = APIRouter(prefix="/api/v1/admin")
+api_router.include_router(course_api)

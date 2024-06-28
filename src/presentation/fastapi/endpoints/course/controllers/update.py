@@ -1,0 +1,22 @@
+from dependency_injector.wiring import Provide
+from fastapi import Depends
+
+from src.domain.common.data_models import JsonResponse
+from src.domain.course.dto.course import CourseInCreate, CourseInResponse, CourseInUpdate
+from src.domain.course.port.course_repo import ICourseRepo
+from src.domain.user.dto.user import UserInCreate, UserInResponse
+from src.infrastructure.ioc.container.application import AppContainer
+from src.presentation.fastapi.endpoints.controller_interface import IController
+
+
+class UpdateCourseController(IController[UserInCreate, JsonResponse[UserInResponse]]):
+
+    def __init__(
+        self,
+        course_repo: ICourseRepo = Depends(Provide[AppContainer.infrastructure.course_repo])
+    ):
+        self.__course_repo = course_repo
+
+    async def __call__(self, request: CourseInUpdate) -> JsonResponse[CourseInResponse]:
+        course = await self.__course_repo.update(request)
+        return JsonResponse[CourseInResponse](answer=CourseInResponse.from_course(course))

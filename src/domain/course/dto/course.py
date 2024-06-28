@@ -17,7 +17,6 @@ class CourseInCreate(JsonModel):
     cover:       CourseCover
 
 
-
 class CourseInUpdateRequest(JsonModel):
     title:       CourseTitle | None = None
     description: CourseDescription | None = None
@@ -32,6 +31,7 @@ class CourseInUpdate(JsonModel):
 
 
 class CourseInResponse(JsonModel):
+    id:          UUID4
     title:       CourseTitle
     description: CourseDescription
     cover:       CourseCover
