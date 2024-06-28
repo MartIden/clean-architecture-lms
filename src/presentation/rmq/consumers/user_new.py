@@ -1,8 +1,8 @@
 from src.presentation.rmq.handlers.user.user_new_notify import CreateUserNotifyHandler
-from src.presentation.rmq.init.consumer import RmqHandlersRunnerConsumerImpl
+from src.presentation.rmq.init.consumer import RmqHandlersRunnerConsumer
 
 
-class UserNewConsumer(RmqHandlersRunnerConsumerImpl):
+class UserNewConsumer(RmqHandlersRunnerConsumer):
 
     _handlers_types = [CreateUserNotifyHandler]
 

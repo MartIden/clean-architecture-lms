@@ -12,3 +12,14 @@ class User(Entity[UUID4]):
     email: UserEmail
     roles: list[UserRoleEnum]
     password: UserPassword | None = None
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "User":
+        if data:
+            return cls(
+                id=data.get("id"),
+                login=data.get("login"),
+                email=data.get("email"),
+                roles=data.get("roles"),
+                password=data.get("password"),
+            )

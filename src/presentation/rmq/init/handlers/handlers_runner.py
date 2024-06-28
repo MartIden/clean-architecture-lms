@@ -9,13 +9,12 @@ from pydantic import ValidationError
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.rmq.init.exceptions import SkipHandleException, InterruptException, NackInterruptException
 from src.presentation.rmq.init.handlers.abstract_handler import AbstractRmqHandler
-from src.presentation.rmq.init.handlers.factory_method import AbstractRmqHandlerCreator
 
 
 class HandlersRunner:
     def __init__(
         self,
-        message: Any,
+        message: dict,
         context: Optional[dict],
         handlers_types: List[Type[AbstractRmqHandler]],
         logger: Logger = Provide[AppContainer.core.logger],

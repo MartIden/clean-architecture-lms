@@ -10,12 +10,9 @@ from src.presentation.rmq.init.handlers.abstract_handler import AbstractRmqHandl
 
 class CreateUserNotifyHandler(AbstractRmqHandler):
 
-    def __init__(
-        self,
-        logger: Logger = Provide[AppContainer.core.logger],
-    ):
+    def __init__(self, logger: Logger = Provide[AppContainer.core.logger]):
         self._logger = logger
 
     async def handle(self, message: dict, context: Optional[dict]) -> None:
-        user = User(**message)
+        user = User.from_dict(message)
         self._logger.info(f"Send message to email {user.email}")

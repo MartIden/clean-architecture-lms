@@ -66,7 +66,7 @@ class AbstractRmqConsumer(IRmqConsumer, ABC):
         self._logger.info(msg)
 
 
-class RmqHandlersRunnerConsumerImpl(AbstractRmqConsumer, ABC):
+class RmqHandlersRunnerConsumer(AbstractRmqConsumer, ABC):
 
     _handlers_types: Optional[List[Type[AbstractRmqHandler]]] = None
 
