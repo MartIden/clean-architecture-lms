@@ -1,9 +1,10 @@
-from enum import Enum
 from typing import Optional
 
-from pydantic import UUID4, field_validator
+from pydantic import UUID4
 
 from src.domain.common.data_models import JsonModel
+from src.domain.common.enum.order import Order
+from src.domain.common.value_obj.limit import Limit
 from src.domain.user.entity.user import User
 from src.domain.user.enum.roles import UserRoleEnum
 from src.domain.user.value_object.email import UserEmail
@@ -60,17 +61,7 @@ class UsersInResponse(JsonModel):
     count: int
 
 
-class Order(str, Enum):
-    asc = "ASC"
-    desc = "DESC"
-
-
 class UserManyInRequest(JsonModel):
-    limit:  int
+    limit:  Limit
     offset: int
     order:  Order
-
-    @field_validator("limit")
-    def double(cls, v: int) -> int:
-        assert v <= 100, "Максимальное количество записей, которое можно получить за раз - 100s"
-        return v

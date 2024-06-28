@@ -15,8 +15,7 @@ class Error400Handler(AbstractErrorHandler):
     def _http_code(self) -> int:
         return HTTP_400_BAD_REQUEST
 
-    def _base_handle_logic(self, exc: HTTPException) -> JSONResponse:
-
+    def __create_response_message(self, exc: HTTPException) -> dict:
         fields = ", ".join([item.get("loc")[1] for item in exc.args[0]])
 
         error = {
@@ -27,17 +26,20 @@ class Error400Handler(AbstractErrorHandler):
         if self._app_settings.SHOW_TRACEBACK_IN_RESPONSE:
             error["traceback"] = traceback.format_tb(exc.__traceback__)
 
-        extra = {
+        return {
             "success": False,
             "answer": None,
             "error": error,
         }
 
-        json_response = JSONResponse(status_code=self._http_code, content=extra)
 
-        extra["error"]["traceback"] = str(traceback.format_tb(exc.__traceback__))
-        extra.update(context.data)
+    def _base_handle_logic(self, exc: HTTPException) -> JSONResponse:
 
-        self._logger.error(msg=type(exc).__name__, extra=extra)
+        msg = self.__create_response_message(exc)
+        json_response = JSONResponse(status_code=self._http_code, content=msg)
 
+        msg["error"]["traceback"] = str(traceback.format_tb(exc.__traceback__))
+        msg.update(context.data)
+
+        self._logger.error(msg=type(exc).__name__, extra=msg)
         return json_response
