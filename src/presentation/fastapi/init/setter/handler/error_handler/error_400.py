@@ -1,33 +1,27 @@
+import json
 import traceback
-from abc import ABC
-from logging import Logger
 
-from dependency_injector.wiring import inject
 from fastapi import HTTPException
-from starlette.requests import Request
 from starlette.responses import JSONResponse
+from starlette.status import HTTP_400_BAD_REQUEST
 from starlette_context import context
 
-from src.infrastructure.settings.stage.app import AppSettings
-from src.presentation.fastapi.init.setter.handler.error_handler.interface import IErrorHandler
+from src.presentation.fastapi.init.setter.handler.error_handler.abstract import AbstractErrorHandler
 
 
-class AbstractErrorHandler(IErrorHandler, ABC):
+class Error400Handler(AbstractErrorHandler):
 
-    @inject
-    def __init__(
-        self,
-        app_settings: AppSettings,
-        logger: Logger,
-    ):
-        self._logger = logger
-        self._app_settings = app_settings
+    @property
+    def _http_code(self) -> int:
+        return HTTP_400_BAD_REQUEST
 
     def _base_handle_logic(self, exc: HTTPException) -> JSONResponse:
 
+        fields = ", ".join([item.get("loc")[1] for item in exc.args[0]])
+
         error = {
             "errorType": type(exc).__name__,
-            "msg": str(exc),
+            "msg": f"Field required: {fields}",
         }
 
         if self._app_settings.SHOW_TRACEBACK_IN_RESPONSE:
@@ -47,6 +41,3 @@ class AbstractErrorHandler(IErrorHandler, ABC):
         self._logger.error(msg=type(exc).__name__, extra=extra)
 
         return json_response
-
-    async def handle(self, _: Request, exc: HTTPException) -> JSONResponse:
-        return self._base_handle_logic(exc)

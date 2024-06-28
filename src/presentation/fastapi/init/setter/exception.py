@@ -11,6 +11,7 @@ from pydantic_core import ValidationError
 
 from src.infrastructure.ioc.container.application import AppContainer
 from src.infrastructure.settings.stage.app import AppSettings
+from src.presentation.fastapi.init.setter.handler.error_handler.error_400 import Error400Handler
 from src.presentation.fastapi.init.setter.handler.error_handler.error_500 import Error500Handler
 from src.presentation.fastapi.init.setter.handler.error_handler.interface import IErrorHandler
 from src.presentation.fastapi.init.setter.interfase import IAppSetter
@@ -52,6 +53,11 @@ class ExceptionsHandlerSetterFactory(IExceptionsHandlerSetterFactory):
         error_500_handler = Error500Handler(self.__app_settings, self.__logger)
 
         return [
+            FastapiExceptionHandlerMap(RequestValidationError, Error400Handler(self.__app_settings, self.__logger)),
+            FastapiExceptionHandlerMap(UniqueViolationError, error_500_handler),
+            FastapiExceptionHandlerMap(ValidationError, error_500_handler),
+            FastapiExceptionHandlerMap(ClientConnectorError, error_500_handler),
+            FastapiExceptionHandlerMap(PostgresError, error_500_handler),
             FastapiExceptionHandlerMap(Exception, error_500_handler),
             FastapiExceptionHandlerMap(AttributeError, error_500_handler),
             FastapiExceptionHandlerMap(TypeError, error_500_handler),
@@ -60,11 +66,6 @@ class ExceptionsHandlerSetterFactory(IExceptionsHandlerSetterFactory):
             FastapiExceptionHandlerMap(KeyError, error_500_handler),
             FastapiExceptionHandlerMap(EOFError, error_500_handler),
             FastapiExceptionHandlerMap(ConnectionRefusedError, error_500_handler),
-            FastapiExceptionHandlerMap(UniqueViolationError, error_500_handler),
-            FastapiExceptionHandlerMap(ValidationError, error_500_handler),
-            FastapiExceptionHandlerMap(ClientConnectorError, error_500_handler),
-            FastapiExceptionHandlerMap(RequestValidationError, error_500_handler),
-            FastapiExceptionHandlerMap(PostgresError, error_500_handler),
         ]
 
     def create(self) -> ExceptionsHandlerSetter:
