@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import UUID4
+from pydantic import UUID4, Field
 
 from src.domain.common.data_models import JsonModel
 from src.domain.common.enum.order import Order

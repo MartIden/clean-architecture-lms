@@ -85,14 +85,16 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
     async def count(self) -> int:
         sql = self.from_table.select(functions.Count("*")).get_sql()
         rows = await self.execute_with_return(text(sql))
-
-        if row := rows[0] if rows else None:
-            if elem := row[0] if row else None:
-                return elem
-
-        return 0
+        return self._get_counter(rows)
 
     @classmethod
     def _convert_list_to_postgres_array(cls, collection: Sequence[Any]) -> str:
         roles = ",".join([f"{str(item)}" for item in collection])
         return '{{{0}}}'.format(roles)
+
+    @classmethod
+    def _get_counter(cls, rows: Sequence[Row]) -> int:
+        if row := rows[0] if rows else None:
+            if elem := row[0] if row else None:
+                return elem
+        return 0

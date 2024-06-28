@@ -2,14 +2,13 @@ from dependency_injector.wiring import Provide
 from fastapi import Depends
 
 from src.domain.common.data_models import JsonResponse
-from src.domain.course.dto.course import CourseInCreate, CourseInResponse, CourseInUpdate
+from src.domain.course.dto.course import CourseInResponse, CourseInUpdate
 from src.domain.course.port.course_repo import ICourseRepo
-from src.domain.user.dto.user import UserInCreate, UserInResponse
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.fastapi.endpoints.controller_interface import IController
 
 
-class UpdateCourseController(IController[UserInCreate, JsonResponse[UserInResponse]]):
+class UpdateCourseController(IController[CourseInUpdate, JsonResponse[CourseInResponse]]):
 
     def __init__(
         self,

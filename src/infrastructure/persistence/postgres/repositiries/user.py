@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import Sequence
 
 from pydantic import UUID4
-from pypika import PostgreSQLQuery
+from pypika import PostgreSQLQuery, Table, JoinType
 from sqlalchemy import text
 
 from src.domain.user.dto.user import UserInCreate, UserInUpdate
@@ -72,3 +73,26 @@ class UserRepo(AbstractPostgresRepository[UUID4, User], IUserRepo):
             .get_sql()
 
         return await self._execute_one(text(sql))
+
+    async def read_by_course_id(self, id_: UUID4) -> Sequence[User]:
+        users_courses_table = Table("users_courses")
+        courses_table = Table("courses")
+
+        sql = (
+            self.from_table.select(
+                self.table.id,
+                self.table.login,
+                self.table.email,
+                self.table.password,
+                self.table.roles,
+                self.table.updated_at,
+                self.table.created_at,
+            )
+            .join(users_courses_table, JoinType.left)
+            .on(self.table.id == users_courses_table.user_id)
+            .join(courses_table, JoinType.left)
+            .on(users_courses_table.course_id == courses_table.id)
+            .where(courses_table.id == id_).get_sql()
+        )
+
+        return await self._execute_many(text(sql))

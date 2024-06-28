@@ -1,13 +1,10 @@
 from dependency_injector.wiring import Provide
 from fastapi import Depends
-from pydantic import UUID4
 
 from src.application.service.user.crud import IUserCrudService
-from src.application.use_case.auth.authorization import IAuthorizationCase
 from src.domain.common.data_models import JsonResponse
 from src.domain.user.dto.user import UserInCreate, UserInResponse, UserManyInRequest, UsersInResponse
 from src.infrastructure.ioc.container.application import AppContainer
-from src.infrastructure.persistence.postgres.repositiries.user import UserRepo
 from src.presentation.fastapi.endpoints.controller_interface import IController
 
 

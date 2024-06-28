@@ -1,0 +1,2 @@
+class UserCourseUpdateError(Exception):
+    pass

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Sequence
 
 from pydantic import UUID4
 
@@ -22,7 +23,13 @@ class ICourseRepo(ABC):
     async def delete(self, id_: UUID4) -> Course: ...
 
     @abstractmethod
-    async def read_many(self, limit: int, offset: int, order: Order, order_by: str) -> list[Course]: ...
+    async def read_many(self, limit: int, offset: int, order: Order, order_by: str) -> Sequence[Course]: ...
+
+    @abstractmethod
+    async def read_by_user_id(self, id_: UUID4) -> Sequence[Course]: ...
+
+    @abstractmethod
+    async def count_by_user_id(self, id_: UUID4) -> Sequence[Course]: ...
 
     @abstractmethod
     async def count(self) -> int: ...

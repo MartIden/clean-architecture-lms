@@ -4,12 +4,11 @@ from fastapi import Depends
 from src.domain.common.data_models import JsonResponse
 from src.domain.lesson.dto.lesson import LessonInCreate, LessonInResponse
 from src.domain.lesson.port.lesson_repo import ILessonRepo
-from src.domain.user.dto.user import UserInCreate, UserInResponse
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.fastapi.endpoints.controller_interface import IController
 
 
-class CreateLessonController(IController[UserInCreate, JsonResponse[UserInResponse]]):
+class CreateLessonController(IController[LessonInCreate, JsonResponse[LessonInResponse]]):
 
     def __init__(
         self,

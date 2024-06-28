@@ -1,24 +1,25 @@
 from datetime import datetime
+from typing import Sequence
 
 from pydantic import UUID4
-from pypika import PostgreSQLQuery
+from pypika import PostgreSQLQuery, Table, JoinType, functions
 from sqlalchemy import text
 
 from src.domain.course.dto.course import CourseInCreate, CourseInUpdate
 from src.domain.course.entity.course import Course
 from src.domain.course.port.course_repo import ICourseRepo
-from src.domain.user.entity.user import User
 from src.infrastructure.persistence.postgres.repositiries.abstract import AbstractPostgresRepository
 
 
-class CourseRepo(AbstractPostgresRepository[UUID4, User], ICourseRepo):
+class CourseRepo(AbstractPostgresRepository[UUID4, Course], ICourseRepo):
+
     _result_model = Course
 
     @property
     def table_name(self) -> str:
         return "courses"
 
-    async def create(self, schema: CourseInCreate) -> User:
+    async def create(self, schema: CourseInCreate) -> Course:
         now = int(datetime.now().timestamp())
 
         query = PostgreSQLQuery \
@@ -42,7 +43,7 @@ class CourseRepo(AbstractPostgresRepository[UUID4, User], ICourseRepo):
 
         return await self._execute_one(text(query))
 
-    async def update(self, schema: CourseInUpdate) -> User | None:
+    async def update(self, schema: CourseInUpdate) -> Course | None:
         course = await self.read_one(schema.id)
 
         if not course:
@@ -58,3 +59,45 @@ class CourseRepo(AbstractPostgresRepository[UUID4, User], ICourseRepo):
 
         await self.execute(text(query))
         return await self.read_one(schema.id)
+
+    async def read_by_user_id(self, id_: UUID4) -> Sequence[Course]:
+        users_courses_table = Table("users_courses")
+        users_table = Table("users")
+
+        sql = (
+            self.from_table.select(
+                self.table.id,
+                self.table.title,
+                self.table.description,
+                self.table.cover,
+                self.table.updated_at,
+                self.table.created_at,
+            )
+            .join(users_courses_table, JoinType.left)
+            .on(self.table.id == users_courses_table.course_id)
+            .join(users_table, JoinType.left)
+            .on(users_table.id == users_courses_table.user_id)
+            .where(users_table.id == id_).get_sql()
+        )
+
+        return await self._execute_many(text(sql))
+
+    async def count_by_user_id(self, id_: UUID4) -> int:
+        users_courses_table, users_table = Table("users_courses"), Table("users")
+
+        sql = (
+            self.from_table.select(functions.Count("*"))
+            .join(users_courses_table, JoinType.left)
+            .on(self.table.id == users_courses_table.course_id)
+            .join(users_table, JoinType.left)
+            .on(users_table.id == users_courses_table.user_id)
+            .where(users_table.id == id_).get_sql()
+        )
+
+        rows = await self.execute_with_return(text(sql))
+
+        if row := rows[0] if rows else None:
+            if elem := row[0] if row else None:
+                return elem
+
+        return 0

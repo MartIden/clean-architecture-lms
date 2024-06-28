@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
+from typing import Sequence
 
 from pydantic import UUID4
 
 from src.domain.user.dto.user import UserInUpdate, UserInCreate
 from src.domain.user.entity.user import User
-from src.domain.user.exception.create import UserCreateError
-from src.domain.user.exception.exist import UserIsNotExistsError
+from src.domain.user.exception.user.create import UserCreateError
+from src.domain.user.exception.user.exist import UserIsNotExistsError
 from src.domain.user.ports.user_repo import IUserRepo
 
 
@@ -33,6 +34,9 @@ class IUserCrudService(ABC):
     @abstractmethod
     async def read_many(self, limit: int, offset: int, order: str, order_by: str) -> list[User]:
         pass
+
+    @abstractmethod
+    async def read_by_course_id(self, id_: UUID4) -> Sequence[User]: ...
 
     @abstractmethod
     async def count(self) -> int: ...
@@ -73,3 +77,6 @@ class UserCrudService(IUserCrudService):
 
     async def count(self) -> int:
         return await self._repo.count()
+
+    async def read_by_course_id(self, id_: UUID4) -> Sequence[User]:
+        return await self._repo.read_by_course_id(id_)

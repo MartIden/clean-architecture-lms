@@ -2,10 +2,9 @@ from dependency_injector.wiring import Provide
 from fastapi import Depends
 
 from src.application.use_case.auth.authorization import IAuthorizationCase
-from src.application.use_case.user.creation import IUserCreationCase
 from src.domain.auth.dto.auth import JwtInResponse
 from src.domain.common.data_models import JsonResponse
-from src.domain.user.dto.user import UserInCreate, UserInResponse, UserInLogin
+from src.domain.user.dto.user import UserInLogin
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.fastapi.endpoints.controller_interface import IController
 

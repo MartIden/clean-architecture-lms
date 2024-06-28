@@ -6,8 +6,8 @@ from src.application.service.user.crud import IUserCrudService
 from src.domain.common.data_models import JsonResponse
 from src.domain.user.dto.user import UserInResponse
 from src.domain.user.entity.user import User
-from src.domain.user.enum.roles import UserRoleEnum, ALL_ROLES
-from src.domain.user.exception.delete import UserDeleteError
+from src.domain.user.enum.roles import ALL_ROLES
+from src.domain.user.exception.user.delete import UserDeleteError
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.fastapi.depends.auth import has_roles
 from src.presentation.fastapi.endpoints.controller_interface import IController

@@ -9,6 +9,7 @@ from src.presentation.fastapi.depends.order import get_order
 from src.presentation.fastapi.endpoints.course.controllers.create import CreateCourseController
 from src.presentation.fastapi.endpoints.course.controllers.delete import DeleteCourseController
 from src.presentation.fastapi.endpoints.course.controllers.read import ReadCourseController
+from src.presentation.fastapi.endpoints.course.controllers.read_by_user import ReadByUserCourseController
 from src.presentation.fastapi.endpoints.course.controllers.read_many import ReadManyCourseController
 from src.presentation.fastapi.endpoints.course.controllers.update import UpdateCourseController
 
@@ -34,6 +35,16 @@ async def read_many(
 ) -> JsonResponse[CoursesInResponse]:
     request = CourseManyInRequest(limit=limit, offset=offset, order=order)
     return await controller(request)
+
+
+@course_api.get(
+    "/user/{row_id}",
+    response_model=JsonResponse[CoursesInResponse],
+)
+async def read_by_user(
+    row_id: UUID4, controller: ReadByUserCourseController = Depends()
+) -> JsonResponse[CoursesInResponse]:
+    return await controller(row_id)
 
 
 @course_api.get(
