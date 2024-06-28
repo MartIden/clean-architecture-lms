@@ -1,0 +1,2 @@
+class CourseDeleteError(Exception):
+    pass

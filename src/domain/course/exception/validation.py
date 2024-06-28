@@ -1,0 +1,2 @@
+class CourseValidationError(Exception):
+    pass

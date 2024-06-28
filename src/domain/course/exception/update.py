@@ -1,0 +1,2 @@
+class CourseUpdateError(Exception):
+    pass

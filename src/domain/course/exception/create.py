@@ -1,0 +1,2 @@
+class CourseCreateError(Exception):
+    pass

@@ -1,0 +1,2 @@
+class CourseIsNotExistsError(Exception):
+    pass

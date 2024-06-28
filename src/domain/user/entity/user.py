@@ -8,9 +8,9 @@ from src.domain.user.value_object.password import UserPassword
 
 
 class User(Entity[UUID4]):
-    login: UserLogin
-    email: UserEmail
-    roles: list[UserRoleEnum]
+    login:    UserLogin
+    email:    UserEmail
+    roles:    list[UserRoleEnum]
     password: UserPassword | None = None
 
     @classmethod
@@ -22,4 +22,6 @@ class User(Entity[UUID4]):
                 email=data.get("email"),
                 roles=data.get("roles"),
                 password=data.get("password"),
+                created_at=data.get("created_at"),
+                updated_at=data.get("updated_at")
             )
