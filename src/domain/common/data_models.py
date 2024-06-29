@@ -1,4 +1,4 @@
-from typing import Any, TypeVar
+from typing import TypeVar
 
 from pydantic import BaseModel
 
@@ -28,5 +28,5 @@ AnswerT = TypeVar("AnswerT", bound=JsonModel)
 
 class JsonResponse[AnswerT](JsonModel):
     success: bool = True
-    answer: AnswerT | None = None
-    error: ErrorAnswer | None = None
+    answer:  AnswerT     | None = None
+    error:   ErrorAnswer | None = None
