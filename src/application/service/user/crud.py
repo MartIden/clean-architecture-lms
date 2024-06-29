@@ -47,7 +47,6 @@ class IUserCrudService(ABC):
     async def count(self) -> int: ...
 
 
-
 class UserCrudService(IUserCrudService):
 
     def __init__(self, repo: IUserRepo):

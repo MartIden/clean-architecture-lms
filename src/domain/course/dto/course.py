@@ -57,6 +57,7 @@ class CourseInUpdate(JsonModel):
     class Config:
         extra = "ignore"
 
+
 class CourseInResponse(JsonModel):
     id:          UUID4
     title:       CourseTitle
