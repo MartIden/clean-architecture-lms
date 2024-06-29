@@ -12,7 +12,7 @@ from src.domain.course.dto.course import (
     CourseInUpdate,
     CourseByUserManyInRequest
 )
-from src.domain.user.enum.roles import ALL_ROLES
+from src.domain.user.enum.roles import ALL_ROLES, UserRoleEnum
 from src.presentation.fastapi.depends.auth import has_roles
 from src.presentation.fastapi.depends.order import get_order
 from src.presentation.fastapi.endpoints.course.controllers.create import CreateCourseController
@@ -28,6 +28,7 @@ course_api = APIRouter(prefix="/course", tags=["course"], dependencies=[Depends(
 @course_api.post(
     "",
     response_model=JsonResponse[CourseInResponse],
+    dependencies=[Depends(has_roles([UserRoleEnum.AUTHOR]))]
 )
 async def create(
     request: CourseInCreate, controller: CreateCourseController = Depends()
@@ -79,6 +80,7 @@ async def read(
 @course_api.patch(
     "/{row_id}",
     response_model=JsonResponse[CourseInResponse],
+    dependencies=[Depends(has_roles([UserRoleEnum.AUTHOR]))]
 )
 async def update(
     row_id: UUID4, request: CourseInUpdateRequest, controller: UpdateCourseController = Depends()
