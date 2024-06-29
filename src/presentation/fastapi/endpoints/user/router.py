@@ -9,11 +9,12 @@ from src.domain.user.dto.user import (
     UsersInResponse,
     UserInUpdate,
     UserInUpdateRequest,
-    UserByCourseManyInRequest
+    UserByCourseManyInRequest, UsersCountInResponse
 )
 from src.domain.user.enum.roles import ALL_ROLES
 from src.presentation.fastapi.depends.auth import has_roles
 from src.presentation.fastapi.depends.order import get_order
+from src.presentation.fastapi.endpoints.user.controllers.count_by_course import CountUserByCourseController
 from src.presentation.fastapi.endpoints.user.controllers.delete import DeleteUserController
 from src.presentation.fastapi.endpoints.user.controllers.read import ReadUserController
 from src.presentation.fastapi.endpoints.user.controllers.read_by_course import ReadUserByCourseController
@@ -52,6 +53,17 @@ async def read_by_course(
         order=order,
     )
     return await controller(request)
+
+
+@user_api.get(
+    "/course/{row_id}/count",
+    response_model=JsonResponse[UsersCountInResponse],
+)
+async def read_by_course(
+    row_id: UUID4,
+    controller: CountUserByCourseController = Depends()
+) -> JsonResponse[UsersCountInResponse]:
+    return await controller(row_id)
 
 
 @user_api.get(

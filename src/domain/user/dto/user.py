@@ -61,6 +61,9 @@ class UsersInResponse(JsonModel):
     count: int
 
 
+class UsersCountInResponse(JsonModel):
+    count: int
+
 class UserManyInRequest(JsonModel):
     limit:  Limit
     offset: int

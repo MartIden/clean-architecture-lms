@@ -11,6 +11,7 @@ class Course(Entity[UUID4]):
     title:       CourseTitle
     description: CourseDescription
     cover:       CourseCover
+    author_id:   UUID4
 
     @classmethod
     def from_dict(cls, data: dict) -> "Course":
@@ -20,6 +21,7 @@ class Course(Entity[UUID4]):
                 title=data.get("title"),
                 description=data.get("description"),
                 cover=data.get("cover"),
+                author_id=data.get("author_id"),
                 created_at=data.get("created_at"),
                 updated_at=data.get("updated_at")
             )

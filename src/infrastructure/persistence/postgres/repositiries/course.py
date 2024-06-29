@@ -26,19 +26,21 @@ class CourseRepo(AbstractPostgresRepository[UUID4, Course], ICourseRepo):
         query = PostgreSQLQuery \
             .into(self.table) \
             .columns(
-            self.table.title,
-            self.table.description,
-            self.table.cover,
-            self.table.created_at,
-            self.table.updated_at,
-        ) \
+                self.table.title,
+                self.table.description,
+                self.table.cover,
+                self.table.author_id,
+                self.table.created_at,
+                self.table.updated_at,
+            ) \
             .insert(
-            schema.title,
-            schema.description,
-            schema.cover,
-            now,
-            now,
-        ) \
+                schema.title,
+                schema.description,
+                schema.cover,
+                schema.author_id,
+                now,
+                now,
+            ) \
             .returning("*") \
             .get_sql()
 
@@ -51,9 +53,10 @@ class CourseRepo(AbstractPostgresRepository[UUID4, Course], ICourseRepo):
             return
 
         query = PostgreSQLQuery.update(self.table) \
-            .set(self.table.title, schema.title or course.login) \
-            .set(self.table.description, schema.description or course.email) \
-            .set(self.table.cover, schema.cover or course.password) \
+            .set(self.table.title, schema.title or course.title) \
+            .set(self.table.description, schema.description or course.description) \
+            .set(self.table.cover, schema.cover or course.cover) \
+            .set(self.table.author_id, schema.author_id or course.author_id) \
             .set(self.table.updated_at, int(datetime.now().timestamp())) \
             .where(self.table.id == schema.id) \
             .get_sql()
@@ -71,6 +74,7 @@ class CourseRepo(AbstractPostgresRepository[UUID4, Course], ICourseRepo):
                 self.table.title,
                 self.table.description,
                 self.table.cover,
+                self.table.author_id,
                 self.table.updated_at,
                 self.table.created_at,
             )

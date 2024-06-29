@@ -16,11 +16,11 @@ class Error400Handler(AbstractErrorHandler):
         return HTTP_400_BAD_REQUEST
 
     def __create_response_message(self, exc: HTTPException) -> dict:
-        fields = ", ".join([item.get("loc")[1] for item in exc.args[0]])
+        fields = [f"{item.get('msg')}: {item.get('loc')[1]}" for item in exc.args[0]]
 
         error = {
             "errorType": type(exc).__name__,
-            "msg": f"Field required: {fields}",
+            "msg": fields,
         }
 
         if self._app_settings.SHOW_TRACEBACK_IN_RESPONSE:
