@@ -1,21 +1,25 @@
+import pytest
+
 from conftest import *
+from src.domain.user.dto.user import UserInCreate
+from src.domain.user.ports.user_repo import IUserRepo
 
 
-@pytest.mark.parametrize(
-    ("url",),
-    [
-        pytest.param(
-            "/api/v1/course/7b8d3006-4db5-41c6-8910-110b3908d1ca"
-        ),
-        pytest.param(
-            "/api/v1/course/7b8d3006-4db5-41c6-8910-110b3908d1ca"
-        ),
-    ]
-)
 @pytest.mark.asyncio
-async def test_container(url: str, app_client: AsyncClient) -> None:
-    response = await app_client.get(
-        url,
-        headers={"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ5ZWM3ZTA5LTc2NjItNDZkNy04NzQ3LThmNmVmNmU3NzdjOSIsImxvZ2luIjoicm9tYXNhNDY0IiwiZW1haWwiOiJyb21hc2E0NjRAZ21haWwuY29tIiwicm9sZXMiOlsiQURNSU4iXSwiZXhwIjoxNzIyMjM0NDE1LjcxNDYwNH0.gdNBAAa6xtY32_Db-FBlcq0fexg6pJoLXqANSvV2fLI"}
+async def test_get_user(url: str, app_client: AsyncClient, app_container: AppContainer, jwt_auth_header: dict) -> None:
+    user_repo: IUserRepo = app_container.infrastructure.user_repo()
+    user = await user_repo.create(
+        UserInCreate(
+            login="some_user",
+            email="some_user@tt.tt",
+            password="password",
+            roles=[UserRoleEnum.ADMIN]
+        )
     )
+    response = await app_client.get(
+        f"/api/v1/user/{user.id}",
+        headers=jwt_auth_header
+    )
+
     assert response.status_code == 200
+
