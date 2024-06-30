@@ -1,4 +1,5 @@
 import os
+import random
 import uuid
 from datetime import datetime
 from typing import AsyncIterator
@@ -6,9 +7,7 @@ from typing import AsyncIterator
 import pytest_asyncio
 from httpx import AsyncClient
 from pypika import PostgreSQLQuery, Table
-from pypika.queries import DropQueryBuilder
-from sqlalchemy import text, create_engine
-from alembic import command, config
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
 import test
@@ -24,11 +23,9 @@ from src.presentation.fastapi.init.app import LmsApplicationFactory
 @pytest_asyncio.fixture(scope="session", autouse=True)
 async def init(app_container: AppContainer):
     os.environ["APP_ENV"] = AppEnvTypes.TEST.value
-    settings: AppSettings = app_container.core.settings()
-
     await create_db(app_container)
-
-    run_migrations("/Users/rdmorozkin/PycharmProjects/clean-architecture-lms/migration", settings.POSTGRES_URI)
+    settings: AppSettings = app_container.core.settings()
+    run_migrations(f"{settings.ROOT_DIR}/migration", settings.POSTGRES_URI)
 
 
 def run_migrations(script_location: str, dsn: str) -> None:
@@ -45,16 +42,20 @@ async def create_db(app_container: AppContainer):
     settings: AppSettings = app_container.core.settings()
     engine = create_async_engine(settings.POSTGRES_URI)
 
+    new_db_name = f"test_database"
+
     try:
         async with engine.connect() as conn:
             await conn.execution_options(isolation_level="AUTOCOMMIT")
-            await conn.execute(text("DROP DATABASE lms"))
+            await conn.execute(text(f"DROP DATABASE {new_db_name}"))
     except Exception as e:
         pass
-    #
-    # async with engine.connect() as conn:
-    #     await conn.execution_options(isolation_level="AUTOCOMMIT")
-    #     await conn.execute(text("CREATE DATABASE lms"))
+
+    async with engine.connect() as conn:
+        await conn.execution_options(isolation_level="AUTOCOMMIT")
+        await conn.execute(text(f"CREATE DATABASE {new_db_name}"))
+
+    os.environ["POSTGRES_URI"] = settings.POSTGRES_URI.replace("lms", new_db_name)
 
 
 @pytest_asyncio.fixture(scope="session")
