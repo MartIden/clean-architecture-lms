@@ -19,8 +19,9 @@ class BaseRmqBindingsMigrator(IRmqBindingsMigrator):
         self._connector = connector
 
     async def migrate(self, binding: RmqBinding) -> None:
-        connection = await self._connector.get_single_connection()
+        connection = await self._connector.get_connection()
         async with connection.channel() as channel:
             queue = await channel.get_queue(binding.queue)
             exchange = await channel.get_exchange(binding.exchange)
             await queue.bind(exchange, **binding.kwargs)
+        await connection.close()

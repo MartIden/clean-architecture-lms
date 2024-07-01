@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends
+from starlette import status
+from starlette.responses import Response
 
 from src.domain.auth.dto.auth import JwtInResponse
 from src.domain.common.data_models import JsonResponse
@@ -17,8 +19,14 @@ auth_api = APIRouter(tags=["auth"])
     "/register",
     response_model=JsonResponse[UserInResponse],
 )
-async def register(request: UserInCreate, controller: CreateUserController = Depends()) -> JsonResponse[UserInResponse]:
+async def register(
+    request: UserInCreate,
+    response: Response,
+    controller: CreateUserController = Depends(),
+) -> JsonResponse[UserInResponse]:
+    response.status_code = status.HTTP_201_CREATED
     return await controller(request)
+
 
 @auth_api.post(
     "/login",

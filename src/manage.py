@@ -19,6 +19,11 @@ def run_api() -> None:
     runner.run()
 
 
+async def run_all() -> None:
+    run_api()
+    await run_consumer()
+
+
 def run_by_command(argv: list[str], runners_map: dict) -> None:
     try:
         runner_method = runners_map.get(argv[1])
@@ -38,13 +43,11 @@ if __name__ == "__main__":
     container = AppContainer()
     container.wire(packages=[src, fastapi])
 
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
     run_by_command(
         argv=sys.argv,
         runners_map={
             "consumer": run_consumer,
             "api": run_api,
+            "all": run_all,
         }
     )

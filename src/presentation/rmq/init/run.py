@@ -6,7 +6,7 @@ from src.presentation.rmq.init.consumer import IRmqConsumer
 from src.presentation.rmq.init.migrations.binding import BaseRmqBindingsMigrator
 from src.presentation.rmq.init.migrations.exchanges import BaseExchangesMigrator
 from src.presentation.rmq.init.migrations.queue import BaseQueuesMigrator
-from src.presentation.rmq.consumers import get_consumers
+from src.presentation.rmq.consumer import get_consumers
 from src.presentation.rmq.init.declarers.binding import RmqBindingsDeclarerImpl
 from src.presentation.rmq.init.declarers.exchange import RmqExchangesDeclarerImpl
 from src.presentation.rmq.init.declarers.interface import IRmqDeclarer
@@ -33,8 +33,11 @@ class RmqRunnerImpl(IRmqRunner):
     async def __run_consumers(self) -> None:
         loop = asyncio.get_running_loop()
 
+        logger = self.__di_container.core.logger()
+        connector = self.__di_container.infrastructure.rmq_connector()
+
         for consumer in self.__consumers:
-            rmq_consumer = consumer(self.__di_container)  # noqa
+            rmq_consumer = consumer(logger, connector)  # noqa
             await loop.create_task(rmq_consumer.consume())
 
         await asyncio.Future()

@@ -2,12 +2,11 @@ from abc import ABC, abstractmethod
 from typing import TypeVar, Iterable, Generic, Type, Sequence, Any
 
 from pydantic import BaseModel
-from pypika import Table, PostgreSQLQuery, functions
+from pypika import Table, PostgreSQLQuery, functions, Order
 from pypika.queries import QueryBuilder
 from sqlalchemy import text, Row
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
-from src.domain.user.dto.user import Order
 
 IdT = TypeVar("IdT", bound=BaseModel)
 ResultT = TypeVar("ResultT", bound=BaseModel)

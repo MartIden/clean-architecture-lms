@@ -23,7 +23,7 @@ class InfrastructureContainer(containers.DeclarativeContainer):
         RmqConnectorFactory(core.settings()).create
     )
 
-    postgres_session_maker: Factory[async_sessionmaker[AsyncSession]] = providers.Factory(
+    postgres_session_maker: Factory[async_sessionmaker[AsyncSession]] = providers.Callable(
         PostgresConnectorFactory(core.settings()).create
     )
 

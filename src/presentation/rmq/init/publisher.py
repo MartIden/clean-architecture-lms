@@ -32,8 +32,7 @@ class AbstractRmqPublisher(IPublisher, ABC):
     async def _publish(self, message: bytes) -> Any:
         message = Message(message, delivery_mode=DeliveryMode.PERSISTENT)
 
-        connection = await self._connector.get_single_connection()
-        async with connection.channel() as channel:
+        async with self._connector.channel_pool.acquire() as channel:
             exchange = await channel.get_exchange(self._exchange_name)
             return await exchange.publish(message, routing_key=self._exchange_name)
 

@@ -14,16 +14,17 @@ import test
 from src import AppContainer
 from src.application.service.auth.password import IPasswordService
 from src.application.use_case.auth.authorization import IAuthorizationCase
+from src.domain.user.entity.user import User
 from src.domain.user.enum.roles import UserRoleEnum
 from src.infrastructure.settings.stage.app import AppSettings
 from src.infrastructure.settings.stage.base import AppEnvTypes
 from src.presentation.fastapi.init.app import LmsApplicationFactory
 
 
-@pytest_asyncio.fixture(scope="session", autouse=True)
+@pytest_asyncio.fixture(autouse=True, scope="session")
 async def init(app_container: AppContainer):
     os.environ["APP_ENV"] = AppEnvTypes.TEST.value
-    await create_db(app_container)
+    await reset_db(app_container)
     settings: AppSettings = app_container.core.settings()
     run_migrations(f"{settings.ROOT_DIR}/migration", settings.POSTGRES_URI)
 
@@ -38,7 +39,7 @@ def run_migrations(script_location: str, dsn: str) -> None:
     command.upgrade(alembic_cfg, 'head')
 
 
-async def create_db(app_container: AppContainer):
+async def reset_db(app_container: AppContainer) -> None:
     settings: AppSettings = app_container.core.settings()
     engine = create_async_engine(settings.POSTGRES_URI)
 
@@ -47,15 +48,15 @@ async def create_db(app_container: AppContainer):
     try:
         async with engine.connect() as conn:
             await conn.execution_options(isolation_level="AUTOCOMMIT")
-            await conn.execute(text(f"DROP DATABASE {new_db_name}"))
-    except Exception as e:
-        pass
+            await conn.execute(text(f"DROP DATABASE {new_db_name} WITH (FORCE)"))
+    except Exception:
+        return
 
     async with engine.connect() as conn:
         await conn.execution_options(isolation_level="AUTOCOMMIT")
         await conn.execute(text(f"CREATE DATABASE {new_db_name}"))
 
-    os.environ["POSTGRES_URI"] = settings.POSTGRES_URI.replace("lms", new_db_name)
+    os.environ["POSTGRES_URI"] = settings.POSTGRES_URI + new_db_name
 
 
 @pytest_asyncio.fixture(scope="session")
@@ -83,17 +84,24 @@ async def jwt_auth_header(app_container: AppContainer) -> dict:
     now = int(datetime.now().timestamp())
     password_service: IPasswordService = app_container.services.password_service()
     password = password_service.hash("password")
+    login = str(random.randint(1, 10_000))
 
     await insert_data(
         "users",
         ["id", "login", "password", "email", "roles", "created_at", "updated_at"],
-        [(uuid.uuid4(), "user", password, "password@gmail.com", [UserRoleEnum.ADMIN], now, now)],
+        [(uuid.uuid4(), login, password, f"{login}@tt.tt", [UserRoleEnum.ADMIN], now, now)],
         app_container
     )
 
     auth_case: IAuthorizationCase = app_container.services.auth_case()
-    token = await auth_case.authorize("user", "password")
+    token = await auth_case.authorize(login, "password")
 
+    return {"Authorization": f"Bearer {token}"}
+
+
+async def create_jwt_auth_header(user: User, raw_password: str, app_container: AppContainer) -> dict:
+    auth_case: IAuthorizationCase = app_container.services.auth_case()
+    token = await auth_case.authorize(user.login, raw_password)
     return {"Authorization": f"Bearer {token}"}
 
 
@@ -106,6 +114,9 @@ async def insert_data(table_name, columns: list[str], rows: list[tuple], app_con
     async with session_maker() as session:
         await session.execute(text(sql))
         await session.commit()
+
+    if not rows:
+        return
 
     sql = PostgreSQLQuery.into(table).columns(*columns).insert(*rows).get_sql()
 

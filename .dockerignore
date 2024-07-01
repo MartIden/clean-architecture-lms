@@ -190,3 +190,4 @@ debug.json
 run_migrations.sh
 create_migrations.sh
 run.sh
+reset_trial.sh

@@ -29,7 +29,7 @@ class DeleteUserController(IController[UUID4, JsonResponse[UserInResponse]]):
         if user.id != self.__current_user.id:
             raise UserDeleteError("Допускается удалять только свой профиль")
 
-        user = await self.__user_crud.delete(request)
+        user = await self.__user_crud.delete(id_)
 
         return JsonResponse[UserInResponse](
             answer=UserInResponse.from_user(user)

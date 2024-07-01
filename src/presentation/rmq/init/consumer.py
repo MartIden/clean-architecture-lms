@@ -1,3 +1,4 @@
+from logging import Logger
 from typing import List, Optional, Type
 from abc import ABC, abstractmethod
 import json
@@ -5,6 +6,7 @@ import json
 from aio_pika.abc import AbstractIncomingMessage
 
 from src.infrastructure.ioc.container.application import AppContainer
+from src.infrastructure.rmq.connector import IRmqConnector
 from src.presentation.rmq.init.exceptions import NackInterruptException, InterruptException
 from src.presentation.rmq.init.handlers.abstract_handler import AbstractRmqHandler
 from src.presentation.rmq.init.handlers.factory_method import AbstractRmqHandlerCreator
@@ -19,10 +21,9 @@ class IRmqConsumer(ABC):
 
 
 class AbstractRmqConsumer(IRmqConsumer, ABC):
-    def __init__(self, di_container: AppContainer):
-        self._di_container = di_container
-        self._logger = self._di_container.core.logger()
-        self._connector = self._di_container.infrastructure.rmq_connector()
+    def __init__(self, logger: Logger, connector: IRmqConnector):
+        self._logger = logger
+        self._connector = connector
 
     @property
     def _auto_ack(self) -> bool:

@@ -12,7 +12,7 @@ from src.infrastructure.ioc.container.core import CoreContainer
 from src.infrastructure.ioc.container.infrastructure import InfrastructureContainer
 from src.infrastructure.ioc.factory.jwt import JwtServiceFactory
 from src.infrastructure.ioc.factory.password import PasswordServiceFactory
-from src.presentation.rmq.publishers.user_new import UserNewPublisher
+from src.presentation.rmq.publisher.user_new import UserNewPublisher
 
 
 class ServicesContainer(containers.DeclarativeContainer):

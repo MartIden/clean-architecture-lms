@@ -6,14 +6,14 @@ from src.infrastructure.settings.stage.app import AppSettings
 
 __all__ = ["get_consumers"]
 
-from src.presentation.rmq.consumers.user_new import UserNewConsumer
+from src.presentation.rmq.consumer.user_new import UserNewConsumer
 
 consumers = {
     "prod": [],
     "dev":  [
         UserNewConsumer,
     ],
-    "rmq": [],
+    "test": [],
 }
 
 

@@ -1,12 +1,10 @@
 import asyncio
 from abc import ABC, abstractmethod
-from asyncio import AbstractEventLoop
 from dataclasses import dataclass
-from typing import Optional
 
 import aio_pika
 from aio_pika import Channel
-from aio_pika.abc import AbstractConnection
+from aio_pika.abc import AbstractConnection, AbstractChannel
 from aio_pika.pool import Pool
 from async_lru import alru_cache
 
@@ -17,7 +15,7 @@ class IRmqConnector(ABC):
     async def get_connection(self) -> AbstractConnection: ...
 
     @abstractmethod
-    async def get_single_connection(self) -> AbstractConnection:
+    async def get_cached_connection(self) -> AbstractConnection:
         """ function for cache """
 
     @abstractmethod
@@ -25,7 +23,7 @@ class IRmqConnector(ABC):
         """ function for cache """
 
     @abstractmethod
-    async def get_single_channel(self) -> Channel: ...
+    async def get_cached_channel(self) -> Channel: ...
 
     @property
     @abstractmethod
@@ -55,26 +53,23 @@ class RmqConnector(IRmqConnector):
     async def get_connection(self) -> AbstractConnection:
         return await aio_pika.connect(url=self._uri)
 
-    @alru_cache(maxsize=10)
-    async def get_single_connection(self) -> AbstractConnection:
+    @alru_cache(maxsize=1)
+    async def get_cached_connection(self) -> AbstractConnection:
         return await self.get_connection()
 
-    async def get_channel(self) -> Channel:
-        async with self.connection_pool.acquire() as connection:
-            channel = await connection.channel()
-            await channel.set_qos(prefetch_count=self._max_messages_in_parallel)
-            return channel
+    async def get_channel(self) -> AbstractChannel:
+        connection = await self.get_connection()
+        channel = await connection.channel()
+        await channel.set_qos(prefetch_count=self._max_messages_in_parallel)
+        return channel
 
     @alru_cache(maxsize=1)
-    async def get_single_channel(self) -> Channel:
-        async with self.connection_pool.acquire() as connection:
-            channel = await connection.channel()
-            await channel.set_qos(prefetch_count=self._max_messages_in_parallel)
-            return channel
+    async def get_cached_channel(self) -> AbstractChannel:
+        return await self.get_channel()
 
     @property
     def connection_pool(self) -> Pool[AbstractConnection]:
-        return Pool(self.get_single_connection, max_size=self._connection_size)
+        return Pool(self.get_connection, max_size=self._connection_size)
 
     @property
     def channel_pool(self) -> Pool[Channel]:

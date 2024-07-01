@@ -20,9 +20,10 @@ class BaseQueuesMigrator(IQueueMigrator):
         self._connector = connector
 
     async def __create_queue(self, queue: RmqQueue) -> None:
-        connection = await self._connector.get_single_connection()
+        connection = await self._connector.get_connection()
         async with connection.channel() as channel:
             await channel.declare_queue(queue.name, **queue.kwargs)
+        await connection.close()
 
     async def migrate(self, queue: RmqQueue) -> None:
         await self.__create_queue(queue)
