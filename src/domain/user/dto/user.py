@@ -56,18 +56,8 @@ class UserInResponse(JsonModel):
             )
 
 
-class UsersInResponse(JsonModel):
-    rows:  list[UserInResponse]
-    count: int
-
-
 class UsersCountInResponse(JsonModel):
     count: int
-
-class UserManyInRequest(JsonModel):
-    limit:  Limit
-    offset: int
-    order:  Order
 
 
 class UserByCourseManyInRequest(JsonModel):

@@ -3,8 +3,6 @@ from typing import Optional
 from pydantic import UUID4
 
 from src.domain.common.data_models import JsonModel
-from src.domain.common.enum.order import Order
-from src.domain.common.value_obj.limit import Limit
 from src.domain.lesson.entity.lesson import Lesson
 from src.domain.lesson.value_object.cover import LessonCover
 from src.domain.lesson.value_object.description import LessonDescription
@@ -51,14 +49,3 @@ class LessonInResponse(LessonInCreate):
                 cover=lesson.cover,
                 course_id=lesson.course_id,
             )
-
-
-class LessonsInResponse(JsonModel):
-    rows:  list[LessonInResponse]
-    count: int
-
-
-class LessonManyInRequest(JsonModel):
-    limit:  Limit
-    offset: int
-    order:  Order

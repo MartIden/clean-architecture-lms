@@ -1,13 +1,11 @@
 from fastapi import APIRouter, Depends
 from pydantic import UUID4
 
-from src.domain.common.data_models import JsonResponse
+from src.domain.common.data_models import JsonResponse, ManyJsonAnswer, ManyInRequest
 from src.domain.common.enum.order import Order
 from src.domain.lesson.dto.lesson import (
     LessonInResponse,
     LessonInCreate,
-    LessonsInResponse,
-    LessonManyInRequest,
     LessonInUpdateRequest,
     LessonInUpdate
 )
@@ -36,22 +34,27 @@ async def create(
 
 @lesson_api.get(
     "/many",
-    response_model=JsonResponse[LessonsInResponse],
+    response_model=JsonResponse[ManyJsonAnswer[LessonInResponse]],
 )
 async def read_many(
     limit: int, offset: int, order: Order = Depends(get_order), controller: ReadManyLessonController = Depends()
-) -> JsonResponse[LessonsInResponse]:
-    request = LessonManyInRequest(limit=limit, offset=offset, order=order)
-    return await controller(request)
+) -> JsonResponse[ManyJsonAnswer[LessonInResponse]]:
+    return await controller(
+        ManyInRequest(
+            limit=limit,
+            offset=offset,
+            order=order
+        )
+    )
 
 
 @lesson_api.get(
     "/course/{row_id}",
-    response_model=JsonResponse[LessonsInResponse],
+    response_model=JsonResponse[ManyJsonAnswer[LessonInResponse]],
 )
 async def read_by_course(
     row_id: UUID4, controller: ReadLessonsByCourseController = Depends()
-) -> JsonResponse[LessonsInResponse]:
+) -> JsonResponse[ManyJsonAnswer[LessonInResponse]]:
     return await controller(row_id)
 
 

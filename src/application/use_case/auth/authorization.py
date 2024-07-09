@@ -33,7 +33,7 @@ class AuthorizationCase(IAuthorizationCase):
     async def authorize(self, login: str, password: str) -> str:
         user = await self.__user_crud.read_by_login(login)
 
-        if not self.__password_service.verify(password, user.password):
+        if not await self.__password_service.verify(password, user.password):
             raise PasswordIsIncorrectError("Некорректный пароль")
 
         return self.__jwt_service.create({
@@ -45,7 +45,7 @@ class AuthorizationCase(IAuthorizationCase):
 
     async def get_user_by_token(self, token: str) -> User:
         user_from_token = self.__jwt_service.verify(token)
-        return await self.__user_crud.read_by_login(user_from_token.get("login"))
+        return User.from_dict(user_from_token)
 
     def decode_token(self, token: str) -> dict:
         return self.__jwt_service.verify(token)

@@ -51,7 +51,7 @@ class RmqConnector(IRmqConnector):
         self._max_messages_in_parallel = connection_settings.max_messages_in_parallel
 
     async def get_connection(self) -> AbstractConnection:
-        return await aio_pika.connect(url=self._uri)
+        return await aio_pika.connect(url=self._uri, loop=asyncio.get_event_loop())
 
     @alru_cache(maxsize=1)
     async def get_cached_connection(self) -> AbstractConnection:

@@ -16,23 +16,23 @@ class CourseInCreate(JsonModel):
     title:       CourseTitle
     description: CourseDescription
     cover:       CourseCover
-    author_id: UUID4
+    author_id:   UUID4
 
 
 class CourseInUpdateRequest(JsonModel):
-    title:          CourseTitle       | None = None
-    description:    CourseDescription | None = None
-    cover:          CourseCover       | None = None
+    title:       CourseTitle | None = None
+    description: CourseDescription | None = None
+    cover:       CourseCover | None = None
 
     class Config:
         extra = "forbid"
 
 
 class CourseInUpdateFullRequest(JsonModel):
-    title:          CourseTitle       | None = None
-    description:    CourseDescription | None = None
-    cover:          CourseCover       | None = None
-    author_id:      UUID4             | None = None
+    title:       CourseTitle | None = None
+    description: CourseDescription | None = None
+    cover:       CourseCover | None = None
+    author_id:   UUID4 | None = None
 
     class Config:
         extra = "forbid"
@@ -40,19 +40,19 @@ class CourseInUpdateFullRequest(JsonModel):
 
 class CourseInUpdateForUpdater(JsonModel):
     id:             UUID4
-    title:          CourseTitle       | None = None
+    title:          CourseTitle | None = None
     description:    CourseDescription | None = None
-    cover:          CourseCover       | None = None
-    author_id:      UUID4             | None = None
-    requested_user: User              | None = None
+    cover:          CourseCover | None = None
+    author_id:      UUID4 | None = None
+    requested_user: User | None = None
 
 
 class CourseInUpdate(JsonModel):
-    id:             UUID4
-    title:          CourseTitle       | None = None
-    description:    CourseDescription | None = None
-    cover:          CourseCover       | None = None
-    author_id:      UUID4             | None = None
+    id:          UUID4
+    title:       CourseTitle | None = None
+    description: CourseDescription | None = None
+    cover:       CourseCover | None = None
+    author_id:   UUID4 | None = None
 
     class Config:
         extra = "ignore"
@@ -77,23 +77,12 @@ class CourseInResponse(JsonModel):
             )
 
 
-class CoursesInResponse(JsonModel):
-    rows:  list[CourseInResponse]
-    count: int
-
-
 class CountCoursesInResponse(JsonModel):
     count: int
 
 
-class CourseManyInRequest(JsonModel):
-    limit:  Limit
-    offset: int
-    order:  Order
-
-
 class CourseByUserManyInRequest(JsonModel):
-    id: UUID4
+    id:     UUID4
     limit:  Limit
     offset: int
     order:  Order

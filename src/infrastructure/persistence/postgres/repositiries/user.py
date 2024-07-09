@@ -51,7 +51,7 @@ class UserRepo(AbstractPostgresRepository[UUID4, User], IUserRepo):
         if not user:
             return
 
-        roles = self._convert_list_to_postgres_array(
+        roles = self._convert_iterable_to_postgres_array(
             collection=[role.value for role in schema.roles or user.roles]
         )
 

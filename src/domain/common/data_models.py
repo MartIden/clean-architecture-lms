@@ -2,6 +2,9 @@ from typing import TypeVar
 
 from pydantic import BaseModel
 
+from src.domain.common.enum.order import Order
+from src.domain.common.value_obj.limit import Limit
+
 
 def convert_field_to_camel_case(string: str) -> str:
     return "".join(
@@ -17,6 +20,20 @@ class JsonModel(BaseModel):
         alias_generator = convert_field_to_camel_case
 
 
+RowT = TypeVar("RowT", bound=JsonModel)
+
+
+class ManyJsonAnswer[RowT](JsonModel):
+    rows: list[RowT]
+    count: int
+
+
+class ManyInRequest(JsonModel):
+    limit: Limit
+    offset: int
+    order: Order
+
+
 class ErrorAnswer(JsonModel):
     error_type: str
     msg: str
@@ -28,5 +45,5 @@ AnswerT = TypeVar("AnswerT", bound=JsonModel)
 
 class JsonResponse[AnswerT](JsonModel):
     success: bool = True
-    answer:  AnswerT     | None = None
-    error:   ErrorAnswer | None = None
+    answer: AnswerT | None = None
+    error: ErrorAnswer | None = None

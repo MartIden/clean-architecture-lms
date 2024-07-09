@@ -2,15 +2,16 @@ from dependency_injector.wiring import Provide
 from fastapi import Depends
 from pydantic import UUID4
 
-from src.domain.common.data_models import JsonResponse
-from src.domain.course.dto.course import CourseInCreate, CourseInResponse, CoursesInResponse, CourseByUserManyInRequest
+from src.domain.common.data_models import JsonResponse, ManyJsonAnswer
+from src.domain.course.dto.course import CourseInResponse, CourseByUserManyInRequest
 from src.domain.course.port.course_repo import ICourseRepo
-from src.domain.user.dto.user import UserInCreate, UserInResponse
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.fastapi.endpoints.controller_interface import IController
 
 
-class ReadByUserCourseController(IController[CourseByUserManyInRequest, JsonResponse[CoursesInResponse]]):
+class ReadByUserCourseController(
+    IController[CourseByUserManyInRequest, JsonResponse[ManyJsonAnswer[CourseInResponse]]]
+):
 
     def __init__(
         self,
@@ -18,7 +19,7 @@ class ReadByUserCourseController(IController[CourseByUserManyInRequest, JsonResp
     ):
         self.__course_repo = course_repo
 
-    async def __call__(self, request: CourseByUserManyInRequest) -> JsonResponse[CoursesInResponse]:
+    async def __call__(self, request: CourseByUserManyInRequest) -> JsonResponse[ManyJsonAnswer[CourseInResponse]]:
         courses = await self.__course_repo.read_by_user_id(
             id_=request.id,
             limit=request.limit,
@@ -29,8 +30,8 @@ class ReadByUserCourseController(IController[CourseByUserManyInRequest, JsonResp
 
         count = await self.__course_repo.count_by_user_id(request.id)
 
-        return JsonResponse[CoursesInResponse](
-            answer=CoursesInResponse(
+        return JsonResponse[ManyJsonAnswer[CourseInResponse]](
+            answer=ManyJsonAnswer[CourseInResponse](
                 rows=[CourseInResponse.from_course(course) for course in courses],
                 count=count
             )

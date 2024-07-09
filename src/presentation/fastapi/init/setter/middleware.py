@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from src.presentation.fastapi.init.setter.handler.middleware.cors import CorsMiddlewareHandler
 from src.presentation.fastapi.init.setter.handler.middleware.interface import IMiddlewareHandler
 from src.presentation.fastapi.init.setter.handler.middleware.raw_context import RawContexMiddlewareHandler
-from src.presentation.fastapi.init.setter.interfase import IAppSetter
+from src.presentation.fastapi.init.setter.interface import IAppSetter
 
 
 class MiddlewaresSetter(IAppSetter):

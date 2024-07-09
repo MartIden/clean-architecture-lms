@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from fastapi import FastAPI, APIRouter, Depends
 
 from src.presentation.fastapi.depends.request_json_logger import RequestJSONLoggerDepend
-from src.presentation.fastapi.init.setter.interfase import IAppSetter
+from src.presentation.fastapi.init.setter.interface import IAppSetter
 from src.presentation.fastapi.router.docs import docs_api
 from src.presentation.fastapi.router.urls import api_router
 
@@ -13,12 +13,6 @@ from src.presentation.fastapi.router.urls import api_router
 class RouterConfig:
     router: APIRouter
     kwargs: dict
-
-
-configs = [
-    RouterConfig(router=api_router, kwargs={"dependencies": [Depends(RequestJSONLoggerDepend.log_it)]}),
-    RouterConfig(router=docs_api, kwargs={"dependencies": [Depends(RequestJSONLoggerDepend.log_it)]}),
-]
 
 
 class RoutersSetter(IAppSetter):
@@ -38,5 +32,11 @@ class IRoutersSetterFactory(ABC):
 
 
 class RoutersSetterFactory(IRoutersSetterFactory):
+
+    __CONFIGS = [
+        RouterConfig(router=api_router, kwargs={"dependencies": [Depends(RequestJSONLoggerDepend.log_it)]}),
+        RouterConfig(router=docs_api, kwargs={"dependencies": [Depends(RequestJSONLoggerDepend.log_it)]}),
+    ]
+
     def create(self) -> IAppSetter:
-        return RoutersSetter(configs)
+        return RoutersSetter(self.__CONFIGS)

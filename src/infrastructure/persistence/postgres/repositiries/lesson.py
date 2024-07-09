@@ -5,8 +5,7 @@ from pydantic import UUID4
 from pypika import PostgreSQLQuery, functions
 from sqlalchemy import text
 
-from src.domain.course.dto.course import CourseInCreate
-from src.domain.lesson.dto.lesson import LessonInUpdate
+from src.domain.lesson.dto.lesson import LessonInUpdate, LessonInCreate
 from src.domain.lesson.entity.lesson import Lesson
 from src.domain.lesson.port.lesson_repo import ILessonRepo
 from src.infrastructure.persistence.postgres.repositiries.abstract import AbstractPostgresRepository
@@ -20,7 +19,7 @@ class LessonRepo(AbstractPostgresRepository[UUID4, Lesson], ILessonRepo):
     def table_name(self) -> str:
         return "lessons"
 
-    async def create(self, schema: CourseInCreate) -> Lesson:
+    async def create(self, schema: LessonInCreate) -> Lesson:
         now = int(datetime.now().timestamp())
 
         query = PostgreSQLQuery \

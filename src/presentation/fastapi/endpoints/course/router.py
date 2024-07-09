@@ -1,26 +1,25 @@
 from fastapi import APIRouter, Depends
 from pydantic import UUID4
 
-from src.domain.common.data_models import JsonResponse
+from src.domain.common.data_models import JsonResponse, ManyJsonAnswer, ManyInRequest
 from src.domain.common.enum.order import Order
 from src.domain.course.dto.course import (
     CourseInCreate,
     CourseInResponse,
-    CoursesInResponse,
-    CourseManyInRequest,
     CourseInUpdateRequest,
-    CourseInUpdate,
-    CourseByUserManyInRequest, CourseInUpdateFullRequest, CourseInUpdateForUpdater, CountCoursesInResponse
+    CourseInUpdateFullRequest,
+    CourseInUpdateForUpdater
 )
+from src.domain.user.dto.user import UserInResponse, UserByCourseManyInRequest, UsersCountInResponse
 from src.domain.user.entity.user import User
 from src.domain.user.enum.roles import ALL_ROLES, UserRoleEnum
 from src.presentation.fastapi.depends.auth import has_roles
 from src.presentation.fastapi.depends.order import get_order
-from src.presentation.fastapi.endpoints.course.controllers.count_by_user import CountByUserCourseController
+from src.presentation.fastapi.endpoints.course.controllers.count_by_course import CountUserByCourseController
 from src.presentation.fastapi.endpoints.course.controllers.create import CreateCourseController
 from src.presentation.fastapi.endpoints.course.controllers.delete import DeleteCourseController
 from src.presentation.fastapi.endpoints.course.controllers.read import ReadCourseController
-from src.presentation.fastapi.endpoints.course.controllers.read_by_user import ReadByUserCourseController
+from src.presentation.fastapi.endpoints.course.controllers.read_by_course import ReadUserByCourseController
 from src.presentation.fastapi.endpoints.course.controllers.read_many import ReadManyCourseController
 from src.presentation.fastapi.endpoints.course.controllers.update import UpdateCourseController, \
     UpdateCourseFullController
@@ -41,43 +40,49 @@ async def create(
 
 @course_api.get(
     "/many",
-    response_model=JsonResponse[CoursesInResponse],
+    response_model=JsonResponse[ManyJsonAnswer[CourseInResponse]],
 )
 async def read_many(
     limit: int, offset: int, order: Order = Depends(get_order), controller: ReadManyCourseController = Depends()
-) -> JsonResponse[CoursesInResponse]:
-    request = CourseManyInRequest(limit=limit, offset=offset, order=order)
-    return await controller(request)
+) -> JsonResponse[ManyJsonAnswer[CourseInResponse]]:
+    return await controller(
+        ManyInRequest(
+            limit=limit,
+            offset=offset,
+            order=order
+        )
+    )
 
 
 @course_api.get(
-    "/user/{row_id}",
-    response_model=JsonResponse[CoursesInResponse],
+    "/{row_id}/user",
+    response_model=JsonResponse[ManyJsonAnswer[UserInResponse]],
 )
-async def read_by_user(
+async def read_users_by_course(
     row_id: UUID4,
     limit: int,
     offset: int,
     order: Order = Depends(get_order),
-    controller: ReadByUserCourseController = Depends()
-) -> JsonResponse[CoursesInResponse]:
-    request = CourseByUserManyInRequest(
-        id=row_id,
-        limit=limit,
-        offset=offset,
-        order=order
+    controller: ReadUserByCourseController = Depends()
+) -> JsonResponse[ManyJsonAnswer[UserInResponse]]:
+    return await controller(
+        UserByCourseManyInRequest(
+            id=row_id,
+            limit=limit,
+            offset=offset,
+            order=order
+        )
     )
-    return await controller(request)
 
 
 @course_api.get(
-    "/user/{row_id}/count",
-    response_model=JsonResponse[CountCoursesInResponse],
+    "/{row_id}/user/count",
+    response_model=JsonResponse[UsersCountInResponse],
 )
-async def read_by_user(
+async def count_users_by_course(
     row_id: UUID4,
-    controller: CountByUserCourseController = Depends()
-) -> JsonResponse[CountCoursesInResponse]:
+    controller: CountUserByCourseController = Depends()
+) -> JsonResponse[UsersCountInResponse]:
     return await controller(row_id)
 
 
@@ -101,16 +106,17 @@ async def update(
     current_user: User = Depends(has_roles([UserRoleEnum.AUTHOR])),
     controller: UpdateCourseController = Depends()
 ) -> JsonResponse[CourseInResponse]:
-    for_update = CourseInUpdateForUpdater(
-        id=row_id,
-        requested_user=current_user,
-        **request.model_dump()
+    return await controller(
+        CourseInUpdateForUpdater(
+            id=row_id,
+            requested_user=current_user,
+            **request.model_dump()
+        )
     )
-    return await controller(for_update)
 
 
 @course_api.patch(
-    "/full/{row_id}",
+    "/{row_id}/full",
     response_model=JsonResponse[CourseInResponse],
 )
 async def update_full(
@@ -119,12 +125,13 @@ async def update_full(
     current_user: User = Depends(has_roles([UserRoleEnum.ADMIN])),
     controller: UpdateCourseFullController = Depends()
 ) -> JsonResponse[CourseInResponse]:
-    for_update = CourseInUpdateForUpdater(
-        id=row_id,
-        requested_user=current_user,
-        **request.model_dump()
+    return await controller(
+        CourseInUpdateForUpdater(
+            id=row_id,
+            requested_user=current_user,
+            **request.model_dump()
+        )
     )
-    return await controller(for_update)
 
 
 @course_api.delete(

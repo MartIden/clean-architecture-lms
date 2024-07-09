@@ -20,9 +20,19 @@ class ServicesContainer(containers.DeclarativeContainer):
     core: CoreContainer = providers.Container(CoreContainer)
     infrastructure: InfrastructureContainer = providers.Container(InfrastructureContainer)
 
-    user_crud_service: Factory[IUserCrudService] = providers.Factory(UserCrudService, infrastructure.user_repo.provided)
-    password_service: Factory[IPasswordService] = providers.Callable(PasswordServiceFactory.create)
-    jwt_service: Factory[IJwtService] = providers.Callable(JwtServiceFactory(core.settings()).create)
+    user_crud_service: Factory[IUserCrudService] = providers.Factory(
+        UserCrudService,
+        infrastructure.user_repo.provided
+    )
+
+    password_service: Factory[IPasswordService] = providers.Callable(
+        PasswordServiceFactory(core.settings()).create
+
+    )
+
+    jwt_service: Factory[IJwtService] = providers.Callable(
+        JwtServiceFactory(core.settings()).create
+    )
 
     auth_case: Factory[IAuthorizationCase] = providers.Factory(
         AuthorizationCase,

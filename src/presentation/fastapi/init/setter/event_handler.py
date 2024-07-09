@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from fastapi import FastAPI
 
 from src.presentation.fastapi.init.setter.handler.event_handler.interface import IEventHandler
-from src.presentation.fastapi.init.setter.interfase import IAppSetter
+from src.presentation.fastapi.init.setter.interface import IAppSetter
 
 
 class EventHandlersSetter(IAppSetter):

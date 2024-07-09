@@ -12,6 +12,7 @@ class ICourseUpdaterCase(ABC):
     @abstractmethod
     async def update(self, data: CourseInUpdateForUpdater) -> Course: ...
 
+
 class CourseUpdaterCase(ICourseUpdaterCase):
 
     def __init__(self, course_repo: ICourseRepo):

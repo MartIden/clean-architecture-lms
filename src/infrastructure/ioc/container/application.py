@@ -1,9 +1,8 @@
 from dependency_injector import containers, providers
 
-import src
 from src.infrastructure.ioc.container.core import CoreContainer
 from src.infrastructure.ioc.container.infrastructure import InfrastructureContainer
-from src.infrastructure.ioc.container.services import ServicesContainer
+from src.infrastructure.ioc.container.service import ServicesContainer
 
 
 class AppContainer(containers.DeclarativeContainer):

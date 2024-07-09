@@ -5,8 +5,8 @@ from pydantic import BaseModel
 from pypika import Table, PostgreSQLQuery, functions, Order
 from pypika.queries import QueryBuilder
 from sqlalchemy import text, Row
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
+from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
 IdT = TypeVar("IdT", bound=BaseModel)
 ResultT = TypeVar("ResultT", bound=BaseModel)
@@ -16,8 +16,8 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
 
     _result_model: Type[ResultT]
 
-    def __init__(self, session_maker: async_sessionmaker[AsyncSession]):
-        self._session_maker = session_maker
+    def __init__(self, async_session_maker: async_sessionmaker[AsyncSession]):
+        self._async_session_maker = async_session_maker
 
     @property
     @abstractmethod
@@ -40,29 +40,29 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
         return [cls._convert_to_model(row) for row in rows]
 
     async def _execute_one(self, sql: text) -> ResultT | None:
-        async with self._session_maker() as session:
+        async with self._async_session_maker() as session:
             result = await session.execute(sql)
-            await session.commit()
-            row = result.fetchone()
 
-            if row:
+            if row := result.fetchone():
+                await session.commit()
                 return self._convert_to_model(row)
 
     async def _execute_many(self, sql: text) -> Sequence[ResultT]:
-        async with self._session_maker() as session:
+        async with self._async_session_maker() as session:
             result = await session.execute(sql)
-            await session.commit()
             rows = result.fetchall()
+            await session.commit()
             return self._convert_to_models(rows)
 
     async def execute_with_return(self, sql: text) -> Sequence[Row]:
-        async with self._session_maker() as session:
+        async with self._async_session_maker() as session:
             result = await session.execute(sql)
+            rows = result.fetchall()
             await session.commit()
-            return result.fetchall()
+            return rows
 
     async def execute(self, sql: text) -> None:
-        async with self._session_maker() as session:
+        async with self._async_session_maker() as session:
             await session.execute(sql)
             await session.commit()
 
@@ -71,9 +71,7 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
         return await self._execute_one(text(sql))
 
     async def delete(self, id_: IdT) -> ResultT | None:
-        user = await self.read_one(id_)
-
-        if user:
+        if await self.read_one(id_):
             sql = self.from_table.delete().where(self.table.id == id_).returning("*").get_sql()
             return await self._execute_one(text(sql))
 
@@ -87,7 +85,7 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
         return self._get_counter(rows)
 
     @classmethod
-    def _convert_list_to_postgres_array(cls, collection: Sequence[Any]) -> str:
+    def _convert_iterable_to_postgres_array(cls, collection: Sequence[Any]) -> str:
         roles = ",".join([f"{str(item)}" for item in collection])
         return '{{{0}}}'.format(roles)
 

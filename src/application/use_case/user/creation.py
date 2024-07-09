@@ -24,15 +24,18 @@ class UserCreationCase(IUserCreationCase):
         self.__user_crud_service = user_crud_service
         self.__user_publisher = user_publisher
 
-    def __create_user_with_hash(self, user: UserInCreate) -> UserInCreate:
+    async def __create_user_with_hash(self, user: UserInCreate) -> UserInCreate:
+        password = await self.__password_service.hash(user.password)
+
         return UserInCreate(
             login=user.login,
             email=user.email,
             roles=user.roles,
-            password=self.__password_service.hash(user.password),
+            password=password,
         )
 
     async def create(self, user: UserInCreate) -> User:
-        user = await self.__user_crud_service.create(data=self.__create_user_with_hash(user))
+        user_with_hash = await self.__create_user_with_hash(user)
+        user = await self.__user_crud_service.create(data=user_with_hash)
         await self.__user_publisher.publish_model(user)
         return user

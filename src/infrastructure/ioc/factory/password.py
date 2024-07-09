@@ -1,10 +1,13 @@
 from passlib.context import CryptContext
 
-from src.application.service.auth.password import IPasswordService, PasswordService
+from src.application.service.auth.password import IPasswordService, PasswordService, AsyncBcryptService
+from src.infrastructure.settings.stage.app import AppSettings
 
 
 class PasswordServiceFactory:
-    @classmethod
-    def create(cls) -> IPasswordService:
-        pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-        return PasswordService(pwd_context)
+
+    def __init__(self, app_settings: AppSettings):
+        self.__app_settings = app_settings
+
+    def create(self) -> IPasswordService:
+        return PasswordService(AsyncBcryptService())

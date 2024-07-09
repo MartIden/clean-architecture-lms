@@ -1,6 +1,4 @@
-from unittest.mock import patch
-
-import pytest
+from unittest.mock import patch, AsyncMock
 
 from src.presentation.rmq.publisher.user_new import UserNewPublisher
 from test.conftest import *
@@ -8,8 +6,8 @@ from src.domain.user.dto.user import UserInCreate
 from src.domain.user.enum.roles import UserRoleEnum
 
 
-@pytest.mark.asyncio
-@patch.object(UserNewPublisher, "publish_model")
+@pytest.mark.asyncio(scope="session")
+@patch.object(UserNewPublisher, "publish_model", new_callable=AsyncMock)
 async def test_create(publish_model_mock, app_client: AsyncClient, app_container: AppContainer) -> None:
     await insert_data("users", [], [], app_container)
 

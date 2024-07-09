@@ -1,7 +1,7 @@
 import urllib.parse
+from unittest.mock import AsyncMock
 
-import pytest
-
+from src.presentation.rmq.init.publisher import AbstractRmqPublisher
 from test.conftest import *
 from src.application.use_case.user.creation import IUserCreationCase
 from src.domain.common.enum.order import Order
@@ -58,7 +58,7 @@ from src.domain.user.dto.user import UserInCreate
         ),
     ]
 )
-@pytest.mark.asyncio
+@pytest.mark.asyncio(scope="session")
 async def test_get_many_user(
     users: list[dict],
     limit: int,
@@ -70,12 +70,9 @@ async def test_get_many_user(
 ) -> None:
     await insert_data("users", [], [], app_container)
 
-    user_creation_case: IUserCreationCase = app_container.services.user_creation_case()
-    created_users = []
-
-    for user in users:
-        user = await user_creation_case.create(UserInCreate(**user))
-        created_users.append(user)
+    with app_container.services.user_new_publisher.override(AsyncMock(spec=AbstractRmqPublisher)):
+        user_creation_case: IUserCreationCase = app_container.services.user_creation_case()
+        created_users = [await user_creation_case.create(UserInCreate(**user)) for user in users]
 
     jwt_auth_header = await create_jwt_auth_header(created_users[0], "password", app_container)
 
@@ -85,8 +82,7 @@ async def test_get_many_user(
     response = await app_client.get(f"/api/v1/user/many?{url_params}", headers=jwt_auth_header)
     assert response.status_code == 200
 
-    response_body = response.json().get("answer")
-    rows = response_body.get("rows")
+    rows = response.json().get("answer", {}).get("rows")
 
     for i, row in enumerate(rows):
         assert must_be[i].get("login") == row.get("login")

@@ -14,7 +14,7 @@ from src.infrastructure.settings.stage.app import AppSettings
 from src.presentation.fastapi.init.setter.handler.error_handler.error_400 import Error400Handler
 from src.presentation.fastapi.init.setter.handler.error_handler.error_500 import Error500Handler
 from src.presentation.fastapi.init.setter.handler.error_handler.interface import IErrorHandler
-from src.presentation.fastapi.init.setter.interfase import IAppSetter
+from src.presentation.fastapi.init.setter.interface import IAppSetter
 
 
 @dataclass

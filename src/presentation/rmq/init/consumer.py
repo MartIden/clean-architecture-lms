@@ -71,12 +71,12 @@ class RmqHandlersRunnerConsumer(AbstractRmqConsumer, ABC):
 
     _handlers_types: Optional[List[Type[AbstractRmqHandler]]] = None
 
-    async def _set_context(self) -> dict:
-        pass
+    async def _set_context(self, message: AbstractIncomingMessage) -> dict:
+        return {}
 
     async def _message_handle(self, message: AbstractIncomingMessage):
         try:
-            context = await self._set_context()
+            context = await self._set_context(message)
             await HandlersRunner(
                 message=self._message_to_dict(message),
                 context=context,

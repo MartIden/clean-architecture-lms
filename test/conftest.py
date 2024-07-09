@@ -1,16 +1,19 @@
+import asyncio
 import os
 import random
 import uuid
+from asyncio import AbstractEventLoop
 from datetime import datetime
-from typing import AsyncIterator
+from typing import AsyncIterator, Generator
 
+import nest_asyncio
+import pytest
 import pytest_asyncio
 from httpx import AsyncClient
 from pypika import PostgreSQLQuery, Table
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
-import test
 from src import AppContainer
 from src.application.service.auth.password import IPasswordService
 from src.application.use_case.auth.authorization import IAuthorizationCase
@@ -21,7 +24,7 @@ from src.infrastructure.settings.stage.base import AppEnvTypes
 from src.presentation.fastapi.init.app import LmsApplicationFactory
 
 
-@pytest_asyncio.fixture(autouse=True, scope="session")
+@pytest.fixture(autouse=True, scope="session")
 async def init(app_container: AppContainer):
     os.environ["APP_ENV"] = AppEnvTypes.TEST.value
     await reset_db(app_container)
@@ -59,15 +62,12 @@ async def reset_db(app_container: AppContainer) -> None:
     os.environ["POSTGRES_URI"] = settings.POSTGRES_URI + new_db_name
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest.fixture(scope="session")
 def app_container() -> AppContainer:
-    container = AppContainer()
-    container.wire(packages=[test])
-
-    return container
+    return AppContainer()
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest.fixture(scope="session")
 def app_settings(app_container: AppContainer) -> AppSettings:
     return app_container.core.settings()
 
@@ -109,9 +109,9 @@ async def insert_data(table_name, columns: list[str], rows: list[tuple], app_con
     table = Table(table_name)
 
     sql = PostgreSQLQuery.from_(table).delete().get_sql()
-    session_maker = app_container.infrastructure.postgres_session_maker()
+    session_maker = app_container.infrastructure.postgres_session_manager()
 
-    async with session_maker() as session:
+    async with session_maker.session() as session:
         await session.execute(text(sql))
         await session.commit()
 
@@ -120,6 +120,6 @@ async def insert_data(table_name, columns: list[str], rows: list[tuple], app_con
 
     sql = PostgreSQLQuery.into(table).columns(*columns).insert(*rows).get_sql()
 
-    async with session_maker() as session:
+    async with session_maker.session() as session:
         await session.execute(text(sql))
         await session.commit()

@@ -3,10 +3,8 @@ from fastapi import Depends
 from pydantic import UUID4
 
 from src.domain.common.data_models import JsonResponse
-from src.domain.course.dto.course import CourseInCreate, CourseInResponse, CoursesInResponse, CourseByUserManyInRequest, \
-    CountCoursesInResponse
+from src.domain.course.dto.course import CountCoursesInResponse
 from src.domain.course.port.course_repo import ICourseRepo
-from src.domain.user.dto.user import UserInCreate, UserInResponse
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.fastapi.endpoints.controller_interface import IController
 

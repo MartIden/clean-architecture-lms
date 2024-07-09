@@ -6,7 +6,7 @@ from src.infrastructure.ioc.container.application import AppContainer
 from src.infrastructure.settings.stage.app import AppSettings
 from src.presentation.fastapi.init.setter.event_handler import EventHandlersSetterFactory
 from src.presentation.fastapi.init.setter.exception import ExceptionsHandlerSetterFactory
-from src.presentation.fastapi.init.setter.interfase import IAppSetter
+from src.presentation.fastapi.init.setter.interface import IAppSetter
 from src.presentation.fastapi.init.setter.middleware import MiddlewareSetterFactory
 from src.presentation.fastapi.init.setter.router import RoutersSetterFactory
 
