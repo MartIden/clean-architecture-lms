@@ -4,6 +4,7 @@ from src.application.service.auth.jwt import IJwtService
 from src.application.service.auth.password import IPasswordService
 from src.application.service.user.crud import IUserCrudService
 from src.domain.auth.exception.incorrect_password import PasswordIsIncorrectError
+from src.domain.user.dto.user import UserSlim
 from src.domain.user.entity.user import User
 
 
@@ -43,9 +44,9 @@ class AuthorizationCase(IAuthorizationCase):
             "roles": user.roles,
         })
 
-    async def get_user_by_token(self, token: str) -> User:
+    async def get_user_by_token(self, token: str) -> UserSlim:
         user_from_token = self.__jwt_service.verify(token)
-        return User.from_dict(user_from_token)
+        return UserSlim.from_dict(user_from_token)
 
     def decode_token(self, token: str) -> dict:
         return self.__jwt_service.verify(token)

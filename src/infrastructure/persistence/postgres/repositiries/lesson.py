@@ -11,7 +11,7 @@ from src.domain.lesson.port.lesson_repo import ILessonRepo
 from src.infrastructure.persistence.postgres.repositiries.abstract import AbstractPostgresRepository
 
 
-class LessonRepo(AbstractPostgresRepository[UUID4, Lesson], ILessonRepo):
+class LessonRepo(AbstractPostgresRepository[UUID4, LessonInCreate, LessonInUpdate, Lesson], ILessonRepo):
 
     _result_model = Lesson
 

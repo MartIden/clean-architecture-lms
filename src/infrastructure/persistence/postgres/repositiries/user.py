@@ -11,7 +11,7 @@ from src.domain.user.ports.user_repo import IUserRepo
 from src.infrastructure.persistence.postgres.repositiries.abstract import AbstractPostgresRepository
 
 
-class UserRepo(AbstractPostgresRepository[UUID4, User], IUserRepo):
+class UserRepo(AbstractPostgresRepository[UUID4, UserInCreate, UserInUpdate, User], IUserRepo):
 
     _result_model = User
 

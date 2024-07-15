@@ -9,6 +9,7 @@ from src.application.use_case.auth.authorization import IAuthorizationCase
 from src.domain.auth.exception.expired import JwtExpiredError
 from src.domain.auth.exception.header import AuthHeaderIsNotExistError
 from src.domain.auth.exception.roles import RolesIncorrectError
+from src.domain.user.dto.user import UserSlim
 from src.domain.user.entity.user import User
 from src.domain.user.enum.roles import UserRoleEnum
 from src.infrastructure.ioc.container.application import AppContainer
@@ -23,7 +24,7 @@ def get_token(authorization: Annotated[str, Header()],) -> str:
 async def get_current_user(
     token: str = Depends(get_token),
     auth_case_factory: Factory[IAuthorizationCase] = Depends(Provide[AppContainer.services.auth_case])
-) -> User:
+) -> UserSlim:
     auth_case = auth_case_factory.provider()
     jwt_state = auth_case.decode_token(token)
 
@@ -35,7 +36,7 @@ async def get_current_user(
 
 
 def has_roles(roles: list[UserRoleEnum]) -> Callable:
-    def role_validator(user: User = Depends(get_current_user)) -> User:
+    def role_validator(user: UserSlim = Depends(get_current_user)) -> UserSlim:
         if UserRoleEnum.ADMIN in user.roles:
             return user
 

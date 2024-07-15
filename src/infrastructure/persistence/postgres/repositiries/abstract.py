@@ -1,3 +1,4 @@
+import datetime
 from abc import ABC, abstractmethod
 from typing import TypeVar, Iterable, Generic, Type, Sequence, Any
 
@@ -10,9 +11,11 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
 IdT = TypeVar("IdT", bound=BaseModel)
 ResultT = TypeVar("ResultT", bound=BaseModel)
+CreateT = TypeVar("CreateT", bound=BaseModel)
+UpdateT = TypeVar("UpdateT", bound=BaseModel)
 
 
-class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
+class AbstractPostgresRepository(Generic[IdT, CreateT, UpdateT, ResultT], ABC):
 
     _result_model: Type[ResultT]
 
@@ -65,6 +68,56 @@ class AbstractPostgresRepository(Generic[IdT, ResultT], ABC):
         async with self._async_session_maker() as session:
             await session.execute(sql)
             await session.commit()
+
+    @classmethod
+    def __get_fields_from_model(cls, created_model: CreateT) -> list[str]:
+        fields_for_insert = []
+        fields = list(created_model.model_fields.keys())
+
+        for field in fields:
+            if field not in {"id", "created_at", "updated_at"}:
+                fields_for_insert.append(field)
+
+        return fields_for_insert
+
+    async def create(self, created_model: CreateT) -> ResultT:
+        fields_for_insert = self.__get_fields_from_model(created_model)
+        data_for_insert = [getattr(created_model, field) for field in fields_for_insert]
+
+        fields_for_insert.append("created_at")
+        fields_for_insert.append("updated_at")
+
+        now = datetime.datetime.now(datetime.UTC)
+
+        data_for_insert.append(now)
+        data_for_insert.append(now)
+
+        query = PostgreSQLQuery \
+            .into(self.table) \
+            .columns(*fields_for_insert) \
+            .insert(*data_for_insert) \
+            .returning("*") \
+            .get_sql()
+
+        return await self._execute_one(text(query))
+
+    async def update(self, model: UpdateT) -> ResultT | None:
+        row = await self.read_one(model.id)
+
+        if not row:
+            return
+
+        fields_for_update = self.__get_fields_from_model(model)
+
+        query = PostgreSQLQuery.update(self.table)
+
+        for i, field_for_update in enumerate(fields_for_update):
+            query.set(field_for_update, getattr(model, field_for_update), getattr(row, field_for_update))
+
+        query = query.where(self.table.id == model.id).get_sql()
+
+        await self.execute(text(query))
+        return await self.read_one(model.id)
 
     async def read_one(self, id_: IdT) -> ResultT | None:
         sql = self.from_table.select('*').where(self.table.id == id_).get_sql()

@@ -12,6 +12,18 @@ from src.domain.user.value_object.login import UserLogin
 from src.domain.user.value_object.password import UserPassword
 
 
+class UserSlim(JsonModel):
+    id: UUID4
+    login:    UserLogin
+    email:    UserEmail
+    roles:    list[UserRoleEnum]
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Optional["UserSlim"]:
+        if data:
+            return cls(**data)
+
+
 class UserInCreate(JsonModel):
     login:    UserLogin
     email:    UserEmail

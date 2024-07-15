@@ -2,22 +2,27 @@ from fastapi import APIRouter, Depends
 from pydantic import UUID4
 from pypika import Order
 
-from src.domain.common.data_models import JsonResponse, ManyJsonAnswer, ManyInRequest
-from src.domain.course.dto.course import CourseInResponse, CourseByUserManyInRequest, CountCoursesInResponse
+from src.domain.common.data_models import (
+    JsonResponse,
+    ManyJsonAnswer,
+    ManyInRequest
+)
+from src.domain.course.dto.course import (
+    CourseInResponse,
+    CourseByUserManyInRequest,
+    CountCoursesInResponse
+)
 from src.domain.user.dto.user import (
     UserInResponse,
     UserInUpdate,
     UserInUpdateRequest,
-    UserByCourseManyInRequest, UsersCountInResponse
 )
 from src.domain.user.enum.roles import ALL_ROLES
 from src.presentation.fastapi.depends.auth import has_roles
 from src.presentation.fastapi.depends.order import get_order
-from src.presentation.fastapi.endpoints.course.controllers.count_by_course import CountUserByCourseController
 from src.presentation.fastapi.endpoints.user.controllers.count_by_user import CountByUserCourseController
 from src.presentation.fastapi.endpoints.user.controllers.delete import DeleteUserController
 from src.presentation.fastapi.endpoints.user.controllers.read import ReadUserController
-from src.presentation.fastapi.endpoints.course.controllers.read_by_course import ReadUserByCourseController
 from src.presentation.fastapi.endpoints.user.controllers.read_by_user import ReadByUserCourseController
 from src.presentation.fastapi.endpoints.user.controllers.read_many import ReadManyUserController
 from src.presentation.fastapi.endpoints.user.controllers.update import UpdateUserController

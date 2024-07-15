@@ -12,7 +12,7 @@ from src.domain.course.port.course_repo import ICourseRepo
 from src.infrastructure.persistence.postgres.repositiries.abstract import AbstractPostgresRepository
 
 
-class CourseRepo(AbstractPostgresRepository[UUID4, Course], ICourseRepo):
+class CourseRepo(AbstractPostgresRepository[UUID4, CourseInCreate, CourseInUpdate, Course], ICourseRepo):
 
     _result_model = Course
 
