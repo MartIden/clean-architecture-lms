@@ -16,6 +16,6 @@ class CreateProgressController(IController[ProgressInCreate, JsonResponse[Progre
     ):
         self.__progress_repo = progress_repo
 
-    async def __call__(self, request: ProgressInCreate) -> JsonResponse[ProgressInResponse]:
+    async def __call__(self, request: ProgressInCreate) -> JsonResponse:
         lesson = await self.__progress_repo.create(request)
-        return JsonResponse[ProgressInResponse](answer=ProgressInResponse.from_entity(lesson))
+        return JsonResponse(answer=ProgressInResponse.from_entity(lesson))

@@ -66,7 +66,7 @@ class CourseInResponse(JsonModel):
     author_id:   UUID4
 
     @classmethod
-    def from_course(cls, course: Course) -> Optional["CourseInResponse"]:
+    def from_entity(cls, course: Course) -> Optional["CourseInResponse"]:
         if course:
             return cls(
                 id=course.id,

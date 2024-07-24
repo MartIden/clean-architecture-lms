@@ -32,5 +32,5 @@ class DeleteUserController(IController[UUID4, JsonResponse[UserInResponse]]):
         user = await self.__user_crud.delete(id_)
 
         return JsonResponse[UserInResponse](
-            answer=UserInResponse.from_user(user)
+            answer=UserInResponse.from_entity(user)
         )

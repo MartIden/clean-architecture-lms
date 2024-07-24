@@ -19,4 +19,4 @@ class DeleteLessonController(IController[UUID4, JsonResponse[LessonInResponse]])
 
     async def __call__(self, id_: UUID4) -> JsonResponse[LessonInResponse]:
         lesson = await self.__lesson_repo.delete(id_)
-        return JsonResponse[LessonInResponse](answer=LessonInResponse.from_lesson(lesson))
+        return JsonResponse[LessonInResponse](answer=LessonInResponse.from_entity(lesson))

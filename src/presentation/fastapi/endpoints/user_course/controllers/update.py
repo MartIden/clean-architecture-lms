@@ -18,4 +18,4 @@ class UpdateUserCourseController(IController[UserCourseInUpdate, JsonResponse[Us
 
     async def __call__(self, request: UserCourseInUpdate) -> JsonResponse[UserCourseInResponse]:
         user_course = await self.__user_course_repo.update(request)
-        return JsonResponse[UserCourseInResponse](answer=UserCourseInResponse.from_user_course(user_course))
+        return JsonResponse[UserCourseInResponse](answer=UserCourseInResponse.from_entity(user_course))

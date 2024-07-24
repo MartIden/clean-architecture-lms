@@ -21,7 +21,7 @@ class UpdateCourseController(IController[CourseInUpdateForUpdater, JsonResponse[
 
     async def __call__(self, request: CourseInUpdateForUpdater) -> JsonResponse[CourseInResponse]:
         course = await self.__course_updater.update(request)
-        return JsonResponse[CourseInResponse](answer=CourseInResponse.from_course(course))
+        return JsonResponse[CourseInResponse](answer=CourseInResponse.from_entity(course))
 
 
 class UpdateCourseFullController(
@@ -39,4 +39,4 @@ class UpdateCourseFullController(
 
     async def __call__(self, request: CourseInUpdateForUpdater) -> JsonResponse[CourseInResponse]:
         course = await self.__course_updater.update(request)
-        return JsonResponse[CourseInResponse](answer=CourseInResponse.from_course(course))
+        return JsonResponse[CourseInResponse](answer=CourseInResponse.from_entity(course))

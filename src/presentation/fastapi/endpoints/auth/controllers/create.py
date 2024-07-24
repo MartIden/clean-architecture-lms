@@ -18,4 +18,4 @@ class CreateUserController(IController[UserInCreate, JsonResponse[UserInResponse
 
     async def __call__(self, request: UserInCreate) -> JsonResponse[UserInResponse]:
         user = await self.__user_creation_case.create(request)
-        return JsonResponse[UserInResponse](answer=UserInResponse.from_user(user))
+        return JsonResponse[UserInResponse](answer=UserInResponse.from_entity(user))

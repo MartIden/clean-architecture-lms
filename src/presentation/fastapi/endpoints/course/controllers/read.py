@@ -19,4 +19,4 @@ class ReadCourseController(IController[UUID4, JsonResponse[CourseInResponse]]):
 
     async def __call__(self, id_: UUID4) -> JsonResponse[CourseInResponse]:
         course = await self.__course_repo.read_one(id_)
-        return JsonResponse[CourseInResponse](answer=CourseInResponse.from_course(course))
+        return JsonResponse[CourseInResponse](answer=CourseInResponse.from_entity(course))

@@ -18,4 +18,4 @@ class UpdateLessonController(IController[LessonInUpdate, JsonResponse[LessonInRe
 
     async def __call__(self, request: LessonInUpdate) -> JsonResponse[LessonInResponse]:
         lesson = await self.__lesson_repo.update(request)
-        return JsonResponse[LessonInResponse](answer=LessonInResponse.from_lesson(lesson))
+        return JsonResponse[LessonInResponse](answer=LessonInResponse.from_entity(lesson))

@@ -30,7 +30,7 @@ class UserCourseInResponse(JsonModel):
     course_id: UUID4 | None = None
 
     @classmethod
-    def from_user_course(cls, user_course: UserCourse) -> Optional["UserCourseInResponse"]:
+    def from_entity(cls, user_course: UserCourse) -> Optional["UserCourseInResponse"]:
         if user_course:
             return cls(
                 id=user_course.id,

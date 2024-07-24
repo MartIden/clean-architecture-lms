@@ -22,7 +22,7 @@ class ReadManyLessonController(IController[ManyInRequest, JsonResponse[ManyJsonA
 
         return JsonResponse[ManyJsonAnswer[LessonInResponse]](
             answer=ManyJsonAnswer[LessonInResponse](
-                rows=[LessonInResponse.from_lesson(lesson) for lesson in lessons],
+                rows=[LessonInResponse.from_entity(lesson) for lesson in lessons],
                 count=count
             )
         )

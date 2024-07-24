@@ -23,7 +23,7 @@ class ReadByCourseUserCourseController(IController[UUID4, JsonResponse[UserCours
 
         return JsonResponse[UserCoursesInResponse](
             answer=UserCoursesInResponse(
-                rows=[UserCourseInResponse.from_user_course(course) for course in courses],
+                rows=[UserCourseInResponse.from_entity(course) for course in courses],
                 count=count
             )
         )

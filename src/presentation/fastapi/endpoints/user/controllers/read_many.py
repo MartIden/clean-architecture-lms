@@ -23,7 +23,7 @@ class ReadManyUserController(IController[ManyInRequest, JsonResponse[ManyJsonAns
         count = await self.__user_crud.count()
         return JsonResponse[ManyJsonAnswer[UserInResponse]](
             answer=ManyJsonAnswer[UserInResponse](
-                rows=[UserInResponse.from_user(user) for user in users],
+                rows=[UserInResponse.from_entity(user) for user in users],
                 count=count
             )
         )

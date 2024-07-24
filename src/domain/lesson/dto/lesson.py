@@ -11,35 +11,35 @@ from src.domain.lesson.value_object.title import LessonTitle
 
 
 class LessonInCreate(JsonModel):
-    title:       LessonTitle
+    title: LessonTitle
     description: LessonDescription
-    content:     LessonContent
-    cover:       LessonCover
-    course_id:   UUID4
+    content: LessonContent
+    cover: LessonCover
+    course_id: UUID4
 
 
 class LessonInUpdateRequest(JsonModel):
-    title:       LessonTitle | None = None
+    title: LessonTitle | None = None
     description: LessonDescription | None = None
-    content:     LessonContent | None = None
-    cover:       LessonCover | None = None
-    course_id:   UUID4 | None = None
+    content: LessonContent | None = None
+    cover: LessonCover | None = None
+    course_id: UUID4 | None = None
 
 
 class LessonInUpdate(JsonModel):
-    id:          UUID4
-    title:       LessonTitle | None = None
+    id: UUID4
+    title: LessonTitle | None = None
     description: LessonDescription | None = None
-    content:     LessonContent | None = None
-    cover:       LessonCover | None = None
-    course_id:   UUID4 | None = None
+    content: LessonContent | None = None
+    cover: LessonCover | None = None
+    course_id: UUID4 | None = None
 
 
 class LessonInResponse(LessonInCreate):
     id: UUID4
 
     @classmethod
-    def from_lesson(cls, lesson: Lesson) -> Optional["LessonInResponse"]:
+    def from_entity(cls, lesson: Lesson) -> Optional["LessonInResponse"]:
         if lesson:
             return cls(
                 id=lesson.id,

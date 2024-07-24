@@ -23,7 +23,7 @@ class ReadLessonsByCourseController(IController[UUID4, JsonResponse[ManyJsonAnsw
 
         return JsonResponse[ManyJsonAnswer[LessonInResponse]](
             answer=ManyJsonAnswer[LessonInResponse](
-                rows=[LessonInResponse.from_lesson(lesson) for lesson in lessons],
+                rows=[LessonInResponse.from_entity(lesson) for lesson in lessons],
                 count=count,
             )
         )

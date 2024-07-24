@@ -24,7 +24,7 @@ class ReadManyCourseController(IController[ManyInRequest, JsonResponse[ManyJsonA
 
         return JsonResponse[ManyJsonAnswer[CourseInResponse]](
             answer=ManyJsonAnswer[CourseInResponse](
-                rows=[CourseInResponse.from_course(course) for course in courses],
+                rows=[CourseInResponse.from_entity(course) for course in courses],
                 count=count
             )
         )

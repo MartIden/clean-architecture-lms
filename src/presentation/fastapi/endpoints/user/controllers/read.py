@@ -20,5 +20,5 @@ class ReadUserController(IController[UUID4, JsonResponse[UserInResponse]]):
     async def __call__(self, request: UUID4) -> JsonResponse[UserInResponse]:
         user = await self.__user_crud.read_one(request)
         return JsonResponse[UserInResponse](
-            answer=UserInResponse.from_user(user)
+            answer=UserInResponse.from_entity(user)
         )

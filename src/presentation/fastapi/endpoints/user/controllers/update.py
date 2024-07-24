@@ -33,5 +33,5 @@ class UpdateUserController(IController[UserInUpdate, JsonResponse[UserInResponse
         user = await self.__user_crud.update(request)
 
         return JsonResponse[UserInResponse](
-            answer=UserInResponse.from_user(user)
+            answer=UserInResponse.from_entity(user)
         )

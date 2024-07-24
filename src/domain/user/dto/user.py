@@ -58,7 +58,7 @@ class UserInResponse(JsonModel):
     roles: list[UserRoleEnum]
 
     @classmethod
-    def from_user(cls, user: User) -> Optional["UserInResponse"]:
+    def from_entity(cls, user: User) -> Optional["UserInResponse"]:
         if user:
             return cls(
                 id=user.id,

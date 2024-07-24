@@ -24,7 +24,7 @@ class ReadManyUserCourseController(IController[UserCourseManyInRequest, JsonResp
 
         return JsonResponse[UserCoursesInResponse](
             answer=UserCoursesInResponse(
-                rows=[UserCourseInResponse.from_user_course(user_course) for user_course in user_courses],
+                rows=[UserCourseInResponse.from_entity(user_course) for user_course in user_courses],
                 count=count
             )
         )
