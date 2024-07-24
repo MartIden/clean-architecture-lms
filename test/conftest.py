@@ -123,3 +123,13 @@ async def insert_data(table_name, columns: list[str], rows: list[tuple], app_con
     async with session_maker.session() as session:
         await session.execute(text(sql))
         await session.commit()
+
+
+@pytest.fixture(autouse=True, scope="session")
+def event_loop():
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+    yield loop
+    loop.close()

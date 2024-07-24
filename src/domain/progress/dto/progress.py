@@ -38,9 +38,9 @@ class ProgressInResponse(JsonModel):
         if entity:
             return cls(
                 id=entity.id,
-                login=entity.user_id,
-                email=entity.course_id,
-                roles=entity.lesson_id
+                user_id=entity.user_id,
+                course_id=entity.course_id,
+                lesson_id=entity.lesson_id
             )
 
 

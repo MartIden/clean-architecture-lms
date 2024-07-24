@@ -15,7 +15,7 @@ CreateT = TypeVar("CreateT", bound=BaseModel)
 UpdateT = TypeVar("UpdateT", bound=BaseModel)
 
 
-class AbstractPostgresRepository(Generic[IdT, CreateT, UpdateT, ResultT], ABC):
+class AbstractPostgresRepository[IdT, CreateT, UpdateT, ResultT](ABC):
 
     _result_model: Type[ResultT]
 
@@ -87,7 +87,7 @@ class AbstractPostgresRepository(Generic[IdT, CreateT, UpdateT, ResultT], ABC):
         fields_for_insert.append("created_at")
         fields_for_insert.append("updated_at")
 
-        now = datetime.datetime.now(datetime.UTC)
+        now = datetime.datetime.now(datetime.UTC).timestamp()
 
         data_for_insert.append(now)
         data_for_insert.append(now)
