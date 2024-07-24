@@ -14,9 +14,9 @@ from src.domain.user.value_object.password import UserPassword
 
 class UserSlim(JsonModel):
     id: UUID4
-    login:    UserLogin
-    email:    UserEmail
-    roles:    list[UserRoleEnum]
+    login: UserLogin
+    email: UserEmail
+    roles: list[UserRoleEnum]
 
     @classmethod
     def from_dict(cls, data: dict) -> Optional["UserSlim"]:
@@ -25,34 +25,34 @@ class UserSlim(JsonModel):
 
 
 class UserInCreate(JsonModel):
-    login:    UserLogin
-    email:    UserEmail
+    login: UserLogin
+    email: UserEmail
     password: UserPassword
-    roles:    list[UserRoleEnum]
+    roles: list[UserRoleEnum]
 
 
 class UserInLogin(JsonModel):
-    login:    UserLogin
+    login: UserLogin
     password: UserPassword
 
 
 class UserInUpdateRequest(JsonModel):
-    login:    Optional[UserLogin] = None
-    email:    Optional[UserEmail] = None
+    login: Optional[UserLogin] = None
+    email: Optional[UserEmail] = None
     password: Optional[UserPassword] = None
-    roles:    Optional[list[UserRoleEnum]] = None
+    roles: Optional[list[UserRoleEnum]] = None
 
 
 class UserInUpdate(JsonModel):
-    id:       UUID4
-    login:    Optional[UserLogin] = None
-    email:    Optional[UserEmail] = None
+    id: UUID4
+    login: Optional[UserLogin] = None
+    email: Optional[UserEmail] = None
     password: Optional[UserPassword] = None
-    roles:    Optional[list[UserRoleEnum]] = None
+    roles: Optional[list[UserRoleEnum]] = None
 
 
 class UserInResponse(JsonModel):
-    id:    UUID4
+    id: UUID4
     login: UserLogin
     email: UserEmail
     roles: list[UserRoleEnum]
@@ -74,6 +74,6 @@ class UsersCountInResponse(JsonModel):
 
 class UserByCourseManyInRequest(JsonModel):
     id: UUID4
-    limit:  Limit
+    limit: Limit
     offset: int
-    order:  Order
+    order: Order
