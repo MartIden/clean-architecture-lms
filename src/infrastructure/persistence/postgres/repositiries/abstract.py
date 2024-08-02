@@ -9,11 +9,6 @@ from sqlalchemy import text, Row
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
-IdT = TypeVar("IdT", bound=BaseModel)
-ResultT = TypeVar("ResultT", bound=BaseModel)
-CreateT = TypeVar("CreateT", bound=BaseModel)
-UpdateT = TypeVar("UpdateT", bound=BaseModel)
-
 
 class AbstractPostgresRepository[IdT, CreateT, UpdateT, ResultT](ABC):
 
@@ -36,7 +31,7 @@ class AbstractPostgresRepository[IdT, CreateT, UpdateT, ResultT](ABC):
 
     @classmethod
     def _convert_to_model(cls, row: Row) -> ResultT:
-        return cls._result_model(**row._mapping)  # noqa
+        return type(ResultT)(**row._mapping)  # noqa
 
     @classmethod
     def _convert_to_models(cls, rows: Iterable[Row]) -> Sequence[ResultT]:

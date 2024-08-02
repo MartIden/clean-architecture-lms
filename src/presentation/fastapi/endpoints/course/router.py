@@ -10,6 +10,7 @@ from src.domain.course.dto.course import (
     CourseInUpdateFullRequest,
     CourseInUpdateForUpdater
 )
+from src.domain.progress.dto.progress import ProgressInResponse
 from src.domain.user.dto.user import UserInResponse, UserByCourseManyInRequest, UsersCountInResponse
 from src.domain.user.entity.user import User
 from src.domain.user.enum.roles import ALL_ROLES, UserRoleEnum
@@ -21,6 +22,7 @@ from src.presentation.fastapi.endpoints.course.controllers.delete import DeleteC
 from src.presentation.fastapi.endpoints.course.controllers.read import ReadCourseController
 from src.presentation.fastapi.endpoints.course.controllers.read_by_course import ReadUserByCourseController
 from src.presentation.fastapi.endpoints.course.controllers.read_many import ReadManyCourseController
+from src.presentation.fastapi.endpoints.course.controllers.read_progress import ReadProgressByCourseController
 from src.presentation.fastapi.endpoints.course.controllers.update import UpdateCourseController, \
     UpdateCourseFullController
 
@@ -73,6 +75,17 @@ async def read_users_by_course(
             order=order
         )
     )
+
+
+@course_api.get(
+    "/{course_id}/progress",
+    response_model=JsonResponse[ManyJsonAnswer[ProgressInResponse]],
+)
+async def read_progress_by_course(
+    course_id: UUID4,
+    controller: ReadProgressByCourseController = Depends()
+) -> JsonResponse[ManyJsonAnswer[ProgressInResponse]]:
+    return await controller(course_id)
 
 
 @course_api.get(

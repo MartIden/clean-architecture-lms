@@ -13,8 +13,8 @@ class ReadUserByCourseController(
 ):
 
     def __init__(
-            self,
-            user_crud: IUserCrudService = Depends(Provide[AppContainer.services.user_crud_service])
+        self,
+        user_crud: IUserCrudService = Depends(Provide[AppContainer.services.user_crud_service])
     ):
         self.__user_crud = user_crud
 

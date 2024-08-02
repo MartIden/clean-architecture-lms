@@ -1,4 +1,7 @@
+from typing import Sequence
+
 from pydantic import UUID4
+from sqlalchemy import text
 
 from src.domain.progress.dto.progress import ProgressInCreate, ProgressInUpdate
 from src.domain.progress.entity.progress import Progress
@@ -13,3 +16,13 @@ class ProgressRepo(AbstractPostgresRepository[UUID4, ProgressInCreate, ProgressI
     @property
     def table_name(self) -> str:
         return "progress"
+
+    async def get_by_course(self, course_id: UUID4, user_id: UUID4) -> Sequence[Progress]:
+        sql = (
+            self.from_table.select('*')
+            .where(self.table.course_id == course_id)
+            .where(self.table.user_id == user_id)
+            .get_sql()
+        )
+        
+        return await self._execute_many(text(sql))

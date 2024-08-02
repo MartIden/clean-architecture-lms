@@ -4,9 +4,7 @@ from fastapi import Depends
 from src.domain.common.data_models import JsonResponse
 from src.domain.course.dto.course import CourseInCreate, CourseInResponse
 from src.domain.course.port.course_repo import ICourseRepo
-from src.domain.user.enum.roles import UserRoleEnum
 from src.infrastructure.ioc.container.application import AppContainer
-from src.presentation.fastapi.depends.auth import has_roles
 from src.presentation.fastapi.endpoints.controller_interface import IController
 
 

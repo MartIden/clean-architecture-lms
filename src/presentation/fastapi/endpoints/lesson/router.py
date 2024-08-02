@@ -9,9 +9,11 @@ from src.domain.lesson.dto.lesson import (
     LessonInUpdateRequest,
     LessonInUpdate
 )
+from src.domain.progress.dto.progress import ProgressInResponse
 from src.domain.user.enum.roles import ALL_ROLES
 from src.presentation.fastapi.depends.auth import has_roles
 from src.presentation.fastapi.depends.order import get_order
+from src.presentation.fastapi.endpoints.lesson.controllers.add_to_progress import AddToProgressController
 from src.presentation.fastapi.endpoints.lesson.controllers.create import CreateLessonController
 from src.presentation.fastapi.endpoints.lesson.controllers.delete import DeleteLessonController
 from src.presentation.fastapi.endpoints.lesson.controllers.read import ReadLessonController
@@ -65,6 +67,16 @@ async def read_by_course(
 async def read(
     row_id: UUID4, controller: ReadLessonController = Depends()
 ) -> JsonResponse[LessonInResponse]:
+    return await controller(row_id)
+
+
+@lesson_api.post(
+    "/{row_id}/progress/add",
+    response_model=JsonResponse[ProgressInResponse],
+)
+async def read(
+    row_id: UUID4, controller: AddToProgressController = Depends()
+) -> JsonResponse[ProgressInResponse]:
     return await controller(row_id)
 
 

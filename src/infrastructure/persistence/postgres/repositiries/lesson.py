@@ -70,7 +70,7 @@ class LessonRepo(AbstractPostgresRepository[UUID4, LessonInCreate, LessonInUpdat
         sql = self.from_table.select('*').where(self.table.course_id == id_).get_sql()
         return await self._execute_many(text(sql))
 
-    async def count_by_course(self, id_: UUID4) -> Sequence[Lesson]:
+    async def count_by_course(self, id_: UUID4) -> int:
         sql = self.from_table.select(functions.Count("*")).where(self.table.course_id == id_).get_sql()
         rows = await self.execute_with_return(text(sql))
 
@@ -79,4 +79,3 @@ class LessonRepo(AbstractPostgresRepository[UUID4, LessonInCreate, LessonInUpdat
                 return elem
 
         return 0
-

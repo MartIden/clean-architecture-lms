@@ -6,6 +6,9 @@ from src.application.service.auth.password import IPasswordService
 from src.application.service.user.crud import IUserCrudService, UserCrudService
 from src.application.use_case.auth.authorization import IAuthorizationCase, AuthorizationCase
 from src.application.use_case.course.updater import ICourseUpdaterCase, CourseUpdaterCase
+from src.application.use_case.progress.adder import IProgressAdderCase, ProgressAdderCase
+from src.application.use_case.progress.by_course_getter import IByCourseProgressGetterUseCase, \
+    ByCourseProgressGetterUseCase
 from src.application.use_case.user.creation import IUserCreationCase, UserCreationCase
 from src.domain.common.ports.publisher import IPublisher
 from src.infrastructure.ioc.container.core import CoreContainer
@@ -58,4 +61,16 @@ class ServicesContainer(containers.DeclarativeContainer):
     course_updater_case: Factory[ICourseUpdaterCase] = providers.Factory(
         CourseUpdaterCase,
         infrastructure.course_repo
+    )
+
+    progress_adder_case: Factory[IProgressAdderCase] = providers.Factory(
+        ProgressAdderCase,
+        infrastructure.lesson_repo,
+        infrastructure.progress_repo,
+    )
+
+    by_course_progress_getter_case: Factory[IByCourseProgressGetterUseCase] = providers.Factory(
+        ByCourseProgressGetterUseCase,
+        infrastructure.progress_repo,
+        infrastructure.lesson_repo,
     )

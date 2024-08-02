@@ -26,3 +26,6 @@ class IProgressRepo(ABC):
 
     @abstractmethod
     async def count(self) -> int: ...
+
+    @abstractmethod
+    async def get_by_course(self, course_id: UUID4, user_id: UUID4) -> Sequence[Progress]: ...
