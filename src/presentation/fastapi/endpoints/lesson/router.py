@@ -3,6 +3,7 @@ from pydantic import UUID4
 
 from src.domain.common.data_models import JsonResponse, ManyJsonAnswer, ManyInRequest
 from src.domain.common.enum.order import Order
+from src.domain.common.value_obj.limit import Limit
 from src.domain.lesson.dto.lesson import (
     LessonInResponse,
     LessonInCreate,
@@ -43,7 +44,7 @@ async def read_many(
 ) -> JsonResponse[ManyJsonAnswer[LessonInResponse]]:
     return await controller(
         ManyInRequest(
-            limit=limit,
+            limit=Limit(limit),
             offset=offset,
             order=order
         )
@@ -74,7 +75,7 @@ async def read(
     "/{row_id}/progress/add",
     response_model=JsonResponse[ProgressInResponse],
 )
-async def read(
+async def add_progress(
     row_id: UUID4, controller: AddToProgressController = Depends()
 ) -> JsonResponse[ProgressInResponse]:
     return await controller(row_id)

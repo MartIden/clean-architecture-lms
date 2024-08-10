@@ -2,7 +2,7 @@ import asyncio
 from asyncio import AbstractEventLoop
 
 from dependency_injector import containers, providers
-from dependency_injector.providers import Factory
+from dependency_injector.providers import Factory, Container
 from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     AsyncSession,
@@ -29,7 +29,7 @@ from src.infrastructure.rmq.connector import IRmqConnector
 
 
 class InfrastructureContainer(containers.DeclarativeContainer):
-    core: CoreContainer = providers.Container(CoreContainer)
+    core: Container[CoreContainer] = providers.Container(CoreContainer)
 
     event_loop: Factory[AbstractEventLoop] = providers.Singleton(asyncio.get_event_loop)
 

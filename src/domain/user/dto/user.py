@@ -3,6 +3,7 @@ from typing import Optional
 from pydantic import UUID4
 
 from src.domain.common.data_models import JsonModel
+from src.domain.common.dto.event import Event
 from src.domain.common.enum.order import Order
 from src.domain.common.value_obj.limit import Limit
 from src.domain.user.entity.user import User
@@ -25,6 +26,13 @@ class UserSlim(JsonModel):
 
 
 class UserInCreate(JsonModel):
+    login: UserLogin
+    email: UserEmail
+    password: UserPassword
+    roles: list[UserRoleEnum]
+
+
+class UserCreateEvent(Event):
     login: UserLogin
     email: UserEmail
     password: UserPassword

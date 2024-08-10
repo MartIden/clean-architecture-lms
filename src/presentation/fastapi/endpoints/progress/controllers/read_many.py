@@ -9,7 +9,7 @@ from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.fastapi.endpoints.controller_interface import IController
 
 
-class ReadManyProgressController(IController[UUID4, JsonResponse[ProgressInResponse]]):
+class ReadManyProgressController(IController[ManyInRequest, JsonResponse[ManyJsonAnswer[ProgressInResponse]]]):
 
     def __init__(
         self,

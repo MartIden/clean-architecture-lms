@@ -2,11 +2,9 @@ import asyncio
 import os
 import random
 import uuid
-from asyncio import AbstractEventLoop
 from datetime import datetime
-from typing import AsyncIterator, Generator
+from typing import AsyncIterator
 
-import nest_asyncio
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient
@@ -16,7 +14,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from src import AppContainer
 from src.application.service.auth.password import IPasswordService
-from src.application.use_case.auth.authorization import IAuthorizationCase
+from src.application.service.auth.authorization import IAuthorizationCase
 from src.domain.user.entity.user import User
 from src.domain.user.enum.roles import UserRoleEnum
 from src.infrastructure.settings.stage.app import AppSettings

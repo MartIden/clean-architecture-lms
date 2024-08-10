@@ -12,7 +12,7 @@ class IPublisher(ABC):
 
     @property
     @abstractmethod
-    def _exchange_name(self) -> str:
+    def _exchange_name(self) -> str | None:
         pass
 
     @abstractmethod

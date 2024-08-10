@@ -2,7 +2,6 @@ import datetime
 from abc import ABC, abstractmethod
 from typing import TypeVar, Iterable, Generic, Type, Sequence, Any
 
-from pydantic import BaseModel
 from pypika import Table, PostgreSQLQuery, functions, Order
 from pypika.queries import QueryBuilder
 from sqlalchemy import text, Row
@@ -10,7 +9,13 @@ from sqlalchemy import text, Row
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
 
-class AbstractPostgresRepository[IdT, CreateT, UpdateT, ResultT](ABC):
+IdT = TypeVar("IdT")
+CreateT = TypeVar("CreateT")
+UpdateT = TypeVar("UpdateT")
+ResultT = TypeVar("ResultT")
+
+
+class AbstractPostgresRepository(ABC, Generic[IdT, CreateT, UpdateT, ResultT]):
 
     _result_model: Type[ResultT]
 
@@ -31,7 +36,7 @@ class AbstractPostgresRepository[IdT, CreateT, UpdateT, ResultT](ABC):
 
     @classmethod
     def _convert_to_model(cls, row: Row) -> ResultT:
-        return type(ResultT)(**row._mapping)  # noqa
+        return cls._result_model(**row._mapping)  # noqa
 
     @classmethod
     def _convert_to_models(cls, rows: Iterable[Row]) -> Sequence[ResultT]:

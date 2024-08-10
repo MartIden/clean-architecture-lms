@@ -1,11 +1,14 @@
-from unittest.mock import patch, AsyncMock
+from unittest.mock import AsyncMock
 
 import pytest
 
+from src.domain.user.value_object.email import UserEmail
+from src.domain.user.value_object.login import UserLogin
+from src.domain.user.value_object.password import UserPassword
 from src.presentation.rmq.init.publisher import AbstractRmqPublisher
 from src.presentation.rmq.publisher.user_new import UserNewPublisher
 from test.conftest import *
-from src.application.use_case.user.creation import IUserCreationCase
+from src.application.handler.user.creation import IUserCreationCase
 from src.domain.user.dto.user import UserInCreate
 
 
@@ -17,9 +20,9 @@ async def test_delete_user(app_client: AsyncClient, app_container: AppContainer)
         user_creation_case: IUserCreationCase = app_container.services.user_creation_case()
         user = await user_creation_case.create(
             UserInCreate(
-                login="some_user",
-                email="some_user@tt.tt",
-                password="password",
+                login=UserLogin("some_user"),
+                email=UserEmail("some_user@tt.tt"),
+                password=UserPassword("password"),
                 roles=[UserRoleEnum.ADMIN]
             )
         )

@@ -7,6 +7,7 @@ from src.domain.common.data_models import (
     ManyJsonAnswer,
     ManyInRequest
 )
+from src.domain.common.value_obj.limit import Limit
 from src.domain.course.dto.course import (
     CourseInResponse,
     CourseByUserManyInRequest,
@@ -39,7 +40,7 @@ async def read_many(
 ) -> JsonResponse[ManyJsonAnswer[UserInResponse]]:
     return await controller(
         ManyInRequest(
-            limit=limit,
+            limit=Limit(limit),
             offset=offset,
             order=order
         )

@@ -17,8 +17,8 @@ class CountUserByCourseController(IController[UUID4, JsonResponse[UsersCountInRe
     ):
         self.__user_crud = user_crud
 
-    async def __call__(self, id_: UUID4) -> JsonResponse[UsersCountInResponse]:
-        count = await self.__user_crud.count_by_course_id(id_)
+    async def __call__(self, request: UUID4) -> JsonResponse[UsersCountInResponse]:
+        count = await self.__user_crud.count_by_course_id(request)
 
         return JsonResponse[UsersCountInResponse](
             answer=UsersCountInResponse(

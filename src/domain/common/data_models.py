@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import TypeVar, Generic
 
 from pydantic import BaseModel
 
@@ -23,8 +23,8 @@ class JsonModel(BaseModel):
 RowT = TypeVar("RowT", bound=JsonModel)
 
 
-class ManyJsonAnswer[RowT](JsonModel):
-    rows: list[RowT]
+class ManyJsonAnswer(JsonModel, Generic[RowT]):
+    rows: list[RowT] | None
     count: int
 
 
@@ -43,7 +43,7 @@ class ErrorAnswer(JsonModel):
 AnswerT = TypeVar("AnswerT", bound=JsonModel)
 
 
-class JsonResponse[AnswerT](JsonModel):
+class JsonResponse(JsonModel, Generic[AnswerT]):
     success: bool = True
     answer: AnswerT | None = None
     error: ErrorAnswer | None = None

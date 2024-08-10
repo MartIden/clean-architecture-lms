@@ -1,7 +1,6 @@
 from dependency_injector.wiring import Provide
 from fastapi import Depends
 
-from src.application.use_case.user.creation import IUserCreationCase
 from src.domain.common.data_models import JsonResponse
 from src.domain.user.dto.user import UserInCreate, UserInResponse
 from src.infrastructure.ioc.container.application import AppContainer

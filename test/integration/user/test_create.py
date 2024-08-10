@@ -1,5 +1,8 @@
 from unittest.mock import patch, AsyncMock
 
+from src.domain.user.value_object.email import UserEmail
+from src.domain.user.value_object.login import UserLogin
+from src.domain.user.value_object.password import UserPassword
 from src.presentation.rmq.publisher.user_new import UserNewPublisher
 from test.conftest import *
 from src.domain.user.dto.user import UserInCreate
@@ -12,9 +15,9 @@ async def test_create(publish_model_mock, app_client: AsyncClient, app_container
     await insert_data("users", [], [], app_container)
 
     request = UserInCreate(
-        login="some_user",
-        email="some_user@tt.tt",
-        password="password",
+        login=UserLogin("some_user"),
+        email=UserEmail("some_user@tt.tt"),
+        password=UserPassword("password"),
         roles=[UserRoleEnum.ADMIN]
     )
 

@@ -1,7 +1,7 @@
 from dependency_injector.wiring import Provide
 from fastapi import Depends
 
-from src.application.use_case.course.updater import ICourseUpdaterCase
+from src.application.handler.course.updater import ICourseUpdaterCase
 from src.domain.common.data_models import JsonResponse
 from src.domain.course.dto.course import (
     CourseInResponse,

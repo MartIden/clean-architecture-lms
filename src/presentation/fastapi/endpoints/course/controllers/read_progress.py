@@ -12,7 +12,7 @@ from src.presentation.fastapi.depends.auth import has_roles
 from src.domain.progress.dto.progress import ProgressInResponse
 from src.infrastructure.ioc.container.application import AppContainer
 from src.presentation.fastapi.endpoints.controller_interface import IController
-from src.application.use_case.progress.by_course_getter import IByCourseProgressGetterUseCase
+from src.application.handler.progress.by_course_getter import IByCourseProgressGetterUseCase
 
 
 class ReadProgressByCourseController(IController[UUID4, JsonResponse[ManyJsonAnswer[ProgressInResponse]]]):

@@ -32,7 +32,7 @@ course_api = APIRouter(prefix="/course", tags=["course"], dependencies=[Depends(
 @course_api.post(
     "",
     response_model=JsonResponse[CourseInResponse],
-    dependencies=[Depends(has_roles([UserRoleEnum.AUTHOR]))]
+    dependencies=[Depends(has_roles({UserRoleEnum.AUTHOR}))]
 )
 async def create(
     request: CourseInCreate, controller: CreateCourseController = Depends()
@@ -116,7 +116,7 @@ async def read(
 async def update(
     row_id: UUID4,
     request: CourseInUpdateRequest,
-    current_user: User = Depends(has_roles([UserRoleEnum.AUTHOR])),
+    current_user: User = Depends(has_roles({UserRoleEnum.AUTHOR})),
     controller: UpdateCourseController = Depends()
 ) -> JsonResponse[CourseInResponse]:
     return await controller(

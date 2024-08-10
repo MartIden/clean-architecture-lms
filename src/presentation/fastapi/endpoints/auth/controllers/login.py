@@ -1,7 +1,7 @@
 from dependency_injector.wiring import Provide
 from fastapi import Depends
 
-from src.application.use_case.auth.authorization import IAuthorizationCase
+from src.application.service.auth.authorization import IAuthorizationCase
 from src.domain.auth.dto.auth import JwtInResponse
 from src.domain.common.data_models import JsonResponse
 from src.domain.user.dto.user import UserInLogin
