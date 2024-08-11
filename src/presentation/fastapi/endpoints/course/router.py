@@ -8,7 +8,7 @@ from src.domain.course.dto.course import (
     CourseInResponse,
     CourseInUpdateRequest,
     CourseInUpdateFullRequest,
-    CourseInUpdateForUpdater
+    CourseInUpdateEvent
 )
 from src.domain.progress.dto.progress import ProgressInResponse
 from src.domain.user.dto.user import UserInResponse, UserByCourseManyInRequest, UsersCountInResponse
@@ -120,7 +120,7 @@ async def update(
     controller: UpdateCourseController = Depends()
 ) -> JsonResponse[CourseInResponse]:
     return await controller(
-        CourseInUpdateForUpdater(
+        CourseInUpdateEvent(
             id=row_id,
             requested_user=current_user,
             **request.model_dump()
@@ -135,11 +135,11 @@ async def update(
 async def update_full(
     row_id: UUID4,
     request: CourseInUpdateFullRequest,
-    current_user: User = Depends(has_roles([UserRoleEnum.ADMIN])),
+    current_user: User = Depends(has_roles({UserRoleEnum.ADMIN})),
     controller: UpdateCourseFullController = Depends()
 ) -> JsonResponse[CourseInResponse]:
     return await controller(
-        CourseInUpdateForUpdater(
+        CourseInUpdateEvent(
             id=row_id,
             requested_user=current_user,
             **request.model_dump()

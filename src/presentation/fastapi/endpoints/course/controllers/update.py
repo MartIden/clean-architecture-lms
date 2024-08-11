@@ -1,42 +1,39 @@
 from dependency_injector.wiring import Provide
 from fastapi import Depends
 
-from src.application.handler.course.updater import ICourseUpdaterCase
 from src.domain.common.data_models import JsonResponse
 from src.domain.course.dto.course import (
     CourseInResponse,
-    CourseInUpdateForUpdater
+    CourseInUpdateEvent
 )
 from src.infrastructure.ioc.container.application import AppContainer
+from src.infrastructure.mediator.interface import IMediator
 from src.presentation.fastapi.endpoints.controller_interface import IController
 
 
-class UpdateCourseController(IController[CourseInUpdateForUpdater, JsonResponse[CourseInResponse]]):
+class UpdateCourseController(IController[CourseInUpdateEvent, JsonResponse[CourseInResponse]]):
 
-    def __init__(
-        self,
-        course_updater: ICourseUpdaterCase = Depends(Provide[AppContainer.services.course_updater_case])
-    ):
-        self.__course_updater = course_updater
+    def __init__(self, mediator: IMediator = Depends(Provide[AppContainer.handlers.mediator])):
+        self.__mediator = mediator
 
-    async def __call__(self, request: CourseInUpdateForUpdater) -> JsonResponse[CourseInResponse]:
-        course = await self.__course_updater.update(request)
+    async def __call__(self, request: CourseInUpdateEvent) -> JsonResponse[CourseInResponse]:
+        course = await self.__mediator.dispatch(request)
         return JsonResponse[CourseInResponse](answer=CourseInResponse.from_entity(course))
 
 
 class UpdateCourseFullController(
     IController[
-        CourseInUpdateForUpdater,
+        CourseInUpdateEvent,
         JsonResponse[CourseInResponse]
     ]
 ):
 
     def __init__(
         self,
-        course_updater: ICourseUpdaterCase = Depends(Provide[AppContainer.services.course_updater_case])
+        mediator: IMediator = Depends(Provide[AppContainer.handlers.mediator])
     ):
-        self.__course_updater = course_updater
+        self.__mediator = mediator
 
-    async def __call__(self, request: CourseInUpdateForUpdater) -> JsonResponse[CourseInResponse]:
-        course = await self.__course_updater.update(request)
+    async def __call__(self, request: CourseInUpdateEvent) -> JsonResponse[CourseInResponse]:
+        course = await self.__mediator.dispatch(request)
         return JsonResponse[CourseInResponse](answer=CourseInResponse.from_entity(course))

@@ -1,14 +1,15 @@
 from logging import Logger
-from typing import NamedTuple, Type, Callable
+from typing import NamedTuple, Type
 
+from src.application.handler.interface import IHandler
 from src.domain.common.dto.event import Event
-from src.infrastructure.mediator.i_handler import IHandler
-from src.infrastructure.mediator.mediator import IMediator, Mediator
+from src.infrastructure.mediator.impl import Mediator
+from src.infrastructure.mediator.interface import IMediator
 
 
 class BindItem(NamedTuple):
     event: Type[Event]
-    handler_factory: Callable[..., IHandler]
+    handler_factory: IHandler
 
 
 class MediatorFactory:
@@ -21,6 +22,6 @@ class MediatorFactory:
         mediator = Mediator(self.__logger)
 
         for binding in self.__bindings:
-            mediator.bind(binding.event, binding.handler_factory)
+            mediator.add_listener(binding.event, binding.handler_factory)
 
         return mediator

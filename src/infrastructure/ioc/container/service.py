@@ -5,7 +5,6 @@ from src.application.service.auth.jwt import IJwtService
 from src.application.service.auth.password import IPasswordService
 from src.application.service.user.crud import IUserCrudService, UserCrudService
 from src.application.service.auth.authorization import IAuthorizationCase, AuthorizationCase
-from src.application.handler.course.updater import ICourseUpdaterCase, CourseUpdaterCase
 from src.application.handler.progress.adder import IProgressAdderCase, ProgressAdderCase
 from src.application.handler.progress.by_course_getter import (
     IByCourseProgressGetterUseCase,
@@ -31,7 +30,6 @@ class ServicesContainer(containers.DeclarativeContainer):
 
     password_service: Callable[Factory[IPasswordService]] = providers.Callable(
         PasswordServiceFactory(core.settings()).create
-
     )
 
     jwt_service: Factory[IJwtService] = providers.Callable(
@@ -50,11 +48,6 @@ class ServicesContainer(containers.DeclarativeContainer):
         infrastructure.rmq_connector.provided,
         core.settings.provided,
         core.logger.provided,
-    )
-
-    course_updater_case: Factory[ICourseUpdaterCase] = providers.Factory(
-        CourseUpdaterCase,
-        infrastructure.course_repo
     )
 
     progress_adder_case: Factory[IProgressAdderCase] = providers.Factory(

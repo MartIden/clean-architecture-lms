@@ -3,13 +3,14 @@ from typing import Optional
 from pydantic import UUID4
 
 from src.domain.common.data_models import JsonModel
+from src.domain.common.dto.event import Event
 from src.domain.common.enum.order import Order
 from src.domain.common.value_obj.limit import Limit
 from src.domain.course.entity.course import Course
 from src.domain.course.value_object.cover import CourseCover
 from src.domain.course.value_object.description import CourseDescription
 from src.domain.course.value_object.title import CourseTitle
-from src.domain.user.entity.user import User
+from src.domain.user.dto.user import UserSlim
 
 
 class CourseInCreate(JsonModel):
@@ -38,13 +39,13 @@ class CourseInUpdateFullRequest(JsonModel):
         extra = "forbid"
 
 
-class CourseInUpdateForUpdater(JsonModel):
+class CourseInUpdateEvent(Event):
     id:             UUID4
     title:          CourseTitle | None = None
     description:    CourseDescription | None = None
     cover:          CourseCover | None = None
     author_id:      UUID4 | None = None
-    requested_user: User | None = None
+    requested_user: UserSlim | None = None
 
 
 class CourseInUpdate(JsonModel):

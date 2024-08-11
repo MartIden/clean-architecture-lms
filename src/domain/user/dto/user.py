@@ -32,7 +32,7 @@ class UserInCreate(JsonModel):
     roles: list[UserRoleEnum]
 
 
-class UserCreateEvent(Event):
+class UserInCreateEvent(Event):
     login: UserLogin
     email: UserEmail
     password: UserPassword
