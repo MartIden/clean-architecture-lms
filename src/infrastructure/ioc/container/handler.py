@@ -1,8 +1,8 @@
 from dependency_injector import containers, providers
 from dependency_injector.providers import Factory, Container
 
-from src.application.handler.course.updater import CourseUpdaterHandler, ICourseUpdaterHandler
-from src.application.handler.user.creation import IUserCreationHandler, UserCreationHandler
+from src.application.use_case.course.updater import CourseUpdaterHandler, ICourseUpdaterHandler
+from src.application.use_case.user.creation import IUserCreationHandler, UserCreationHandler
 from src.domain.course.dto.course import CourseInUpdateEvent
 from src.domain.user.dto.user import UserInCreateEvent
 from src.infrastructure.ioc.container.core import CoreContainer

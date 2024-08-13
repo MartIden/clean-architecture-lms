@@ -5,7 +5,7 @@ from src.domain.user.value_object.login import UserLogin
 from src.domain.user.value_object.password import UserPassword
 from src.presentation.rmq.init.publisher import AbstractRmqPublisher
 from test.conftest import *
-from src.application.handler.user.creation import IUserCreationCase
+from src.application.use_case.user.creation import IUserCreationCase
 from src.domain.user.dto.user import UserInCreate, UserInUpdateRequest
 
 

@@ -5,8 +5,8 @@ from src.application.service.auth.jwt import IJwtService
 from src.application.service.auth.password import IPasswordService
 from src.application.service.user.crud import IUserCrudService, UserCrudService
 from src.application.service.auth.authorization import IAuthorizationCase, AuthorizationCase
-from src.application.handler.progress.adder import IProgressAdderCase, ProgressAdderCase
-from src.application.handler.progress.by_course_getter import (
+from src.application.use_case.progress.adder import IProgressAdderCase, ProgressAdderCase
+from src.application.use_case.progress.by_course_getter import (
     IByCourseProgressGetterUseCase,
     ByCourseProgressGetterUseCase
 )

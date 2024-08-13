@@ -1,7 +1,7 @@
 from logging import Logger
 from typing import NamedTuple, Type
 
-from src.application.handler.interface import IHandler
+from src.application.use_case.interface import IHandler
 from src.domain.common.dto.event import Event
 from src.infrastructure.mediator.impl import Mediator
 from src.infrastructure.mediator.interface import IMediator

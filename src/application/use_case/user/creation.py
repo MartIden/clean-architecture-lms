@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.application.handler.interface import IHandler
+from src.application.use_case.interface import IHandler
 from src.application.service.auth.password import IPasswordService
 from src.application.service.user.crud import IUserCrudService
 from src.domain.common.ports.publisher import IPublisher

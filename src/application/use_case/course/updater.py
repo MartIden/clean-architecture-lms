@@ -1,4 +1,4 @@
-from src.application.handler.interface import IHandler
+from src.application.use_case.interface import IHandler
 from src.domain.course.dto.course import CourseInUpdateEvent, CourseInUpdate
 from src.domain.course.entity.course import Course
 from src.domain.course.exception.course.update import CourseUpdateError

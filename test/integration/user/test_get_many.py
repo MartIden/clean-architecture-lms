@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock
 
 from src.presentation.rmq.init.publisher import AbstractRmqPublisher
 from test.conftest import *
-from src.application.handler.user.creation import IUserCreationCase
+from src.application.use_case.user.creation import IUserCreationCase
 from src.domain.common.enum.order import Order
 from src.domain.user.dto.user import UserInCreate
 

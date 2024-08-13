@@ -1,6 +1,6 @@
 from typing import Callable
 
-from src.application.handler.user.creation import UserCreationHandler
+from src.application.use_case.user.creation import UserCreationHandler
 from src.application.service.auth.password import IPasswordService
 from src.application.service.user.crud import IUserCrudService
 from src.domain.common.ports.publisher import IPublisher

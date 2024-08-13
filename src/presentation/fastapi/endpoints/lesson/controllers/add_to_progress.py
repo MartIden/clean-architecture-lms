@@ -8,7 +8,7 @@ from src.domain.user.enum.roles import ALL_ROLES
 from src.domain.common.data_models import JsonResponse
 from src.presentation.fastapi.depends.auth import has_roles
 from src.domain.progress.dto.progress import ProgressInResponse
-from src.application.handler.progress.adder import IProgressAdderCase
+from src.application.use_case.progress.adder import IProgressAdderCase
 from src.presentation.fastapi.endpoints.controller_interface import IController
 
 

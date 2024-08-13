@@ -16,7 +16,7 @@ class AbstractRmqHandler(ABC):
         self._logger = logger
 
     def __set_extra(self, input_message: Optional[Any], extra: Optional[dict] = None) -> dict:
-        prepared_extra = {"handler": self.handler_name, "input_message": input_message}
+        prepared_extra = {"use_case": self.handler_name, "input_message": input_message}
 
         if extra:
             prepared_extra = {**prepared_extra, **extra}
