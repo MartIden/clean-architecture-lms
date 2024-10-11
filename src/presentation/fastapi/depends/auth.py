@@ -31,7 +31,7 @@ async def get_current_user(
         if exp < datetime.now().timestamp():
             raise JwtExpiredError("Токен истек")
 
-    return await auth_case.get_user_by_token(token)
+    return auth_case.get_user_by_token(token)
 
 
 def has_roles(roles: set[UserRoleEnum]) -> Callable:

@@ -44,7 +44,7 @@ class AuthorizationCase(IAuthorizationCase):
             "roles": user.roles,
         })
 
-    async def get_user_by_token(self, token: str) -> UserSlim:
+    def get_user_by_token(self, token: str) -> UserSlim:
         user_from_token = self.__jwt_service.verify(token)
         return UserSlim.from_dict(user_from_token)
 
