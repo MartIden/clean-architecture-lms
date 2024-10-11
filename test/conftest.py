@@ -9,6 +9,7 @@ import pytest
 import pytest_asyncio
 from httpx import AsyncClient
 from pypika import PostgreSQLQuery, Table
+from pytest_asyncio import is_async_test
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
@@ -70,7 +71,7 @@ def app_settings(app_container: AppContainer) -> AppSettings:
     return app_container.core.settings()
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session", autouse=False)
 async def app_client() -> AsyncIterator[AsyncClient]:
     app = LmsApplicationFactory().create()
     async with AsyncClient(app=app, base_url="http://test") as client:
@@ -107,9 +108,9 @@ async def insert_data(table_name, columns: list[str], rows: list[tuple], app_con
     table = Table(table_name)
 
     sql = PostgreSQLQuery.from_(table).delete().get_sql()
-    session_maker = app_container.infrastructure.postgres_session_manager()
+    session_maker = app_container.infrastructure.async_session_factory()
 
-    async with session_maker.session() as session:
+    async with session_maker() as session:
         await session.execute(text(sql))
         await session.commit()
 
@@ -123,7 +124,7 @@ async def insert_data(table_name, columns: list[str], rows: list[tuple], app_con
         await session.commit()
 
 
-@pytest.fixture(autouse=True, scope="session")
+@pytest.fixture(scope="session")
 def event_loop():
     try:
         loop = asyncio.get_running_loop()

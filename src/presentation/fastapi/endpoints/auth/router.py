@@ -6,7 +6,7 @@ from starlette import status
 from starlette.responses import Response
 
 from src import AppContainer
-from src.application.use_case.user.creation import UserCreationHandler
+from src.application.use_case.user.creation import UserCreationCase
 from src.domain.auth.dto.auth import JwtInResponse
 from src.domain.common.data_models import JsonResponse
 from src.domain.user.dto.user import (

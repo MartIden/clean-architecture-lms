@@ -3,6 +3,7 @@ from asyncio import AbstractEventLoop
 
 from dependency_injector import containers, providers
 from dependency_injector.providers import Factory, Container
+from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     AsyncSession,
@@ -48,10 +49,6 @@ class InfrastructureContainer(containers.DeclarativeContainer):
         autoflush=True,
         expire_on_commit=False,
         class_=AsyncSession
-    )
-
-    postgres_session_manager: Factory[SessionManager] = providers.Singleton(
-        SessionManager, async_session_factory.provided
     )
 
     user_repo: Factory[IUserRepo] = providers.Factory(

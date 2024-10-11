@@ -72,7 +72,7 @@ async def test_get_many_user(
 
     with app_container.services.user_new_publisher.override(AsyncMock(spec=AbstractRmqPublisher)):
         user_creation_case: IUserCreationCase = app_container.services.user_creation_case()
-        created_users = [await user_creation_case.create(UserInCreate(**user)) for user in users]
+        created_users = [await user_creation_case(UserInCreate(**user)) for user in users]
 
     jwt_auth_header = await create_jwt_auth_header(created_users[0], "password", app_container)
 

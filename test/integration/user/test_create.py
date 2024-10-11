@@ -9,8 +9,8 @@ from src.domain.user.dto.user import UserInCreate
 from src.domain.user.enum.roles import UserRoleEnum
 
 
-@pytest.mark.asyncio(scope="session")
 @patch.object(UserNewPublisher, "publish_model", new_callable=AsyncMock)
+@pytest.mark.asyncio(scope="session")
 async def test_create(publish_model_mock, app_client: AsyncClient, app_container: AppContainer) -> None:
     await insert_data("users", [], [], app_container)
 

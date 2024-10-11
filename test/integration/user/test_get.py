@@ -15,7 +15,7 @@ async def test_get_user(app_client: AsyncClient, app_container: AppContainer) ->
 
     with app_container.services.user_new_publisher.override(AsyncMock(spec=AbstractRmqPublisher)):
         user_creation_case: IUserCreationCase = app_container.services.user_creation_case()
-        user = await user_creation_case.create(
+        user = await user_creation_case(
             UserInCreate(
                 login=UserLogin("some_user"),
                 email=UserEmail("some_user@tt.tt"),

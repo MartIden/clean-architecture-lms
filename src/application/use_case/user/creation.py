@@ -1,19 +1,18 @@
 from abc import ABC, abstractmethod
 
-from src.application.use_case.interface import IHandler
 from src.application.service.auth.password import IPasswordService
 from src.application.service.user.crud import IUserCrudService
 from src.domain.common.ports.publisher import IPublisher
-from src.domain.user.dto.user import UserInCreate, UserInCreateEvent
+from src.domain.user.dto.user import UserInCreate
 from src.domain.user.entity.user import User
 
 
-class IUserCreationHandler(IHandler):
+class IUserCreationCase(ABC):
     @abstractmethod
-    async def __call__(self, event: UserInCreateEvent) -> User: ...
+    async def __call__(self, event: UserInCreate) -> User: ...
 
 
-class UserCreationHandler(IUserCreationHandler):
+class UserCreationCase(IUserCreationCase):
 
     def __init__(
         self,
@@ -25,7 +24,7 @@ class UserCreationHandler(IUserCreationHandler):
         self.__user_crud_service = user_crud_service
         self.__user_publisher = user_publisher
 
-    async def __create_user_with_hash(self, event: UserInCreateEvent) -> UserInCreate:
+    async def __create_user_with_hash(self, event: UserInCreate) -> UserInCreate:
         password = await self.__password_service.hash(event.password)
 
         return UserInCreate(
@@ -35,8 +34,8 @@ class UserCreationHandler(IUserCreationHandler):
             password=password,
         )
 
-    async def __call__(self, event: UserInCreateEvent) -> User:
-        user_with_hash = await self.__create_user_with_hash(event)
+    async def __call__(self, data: UserInCreate) -> User:
+        user_with_hash = await self.__create_user_with_hash(data)
         user = await self.__user_crud_service.create(data=user_with_hash)
         await self.__user_publisher.publish_model(user)
         return user
