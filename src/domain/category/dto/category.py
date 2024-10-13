@@ -13,6 +13,12 @@ class CategoryInCreate(JsonModel):
 
 
 class CategoryInUpdate(JsonModel):
+    id: UUID4
+    title: CategoryTitle | None = None
+    description: CategoryDescription | None = None
+
+
+class CategoryInUpdateRequest(JsonModel):
     title: CategoryTitle | None = None
     description: CategoryDescription | None = None
 

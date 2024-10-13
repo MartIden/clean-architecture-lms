@@ -111,10 +111,11 @@ class AbstractPostgresRepository(ABC, Generic[IdT, CreateT, UpdateT, ResultT]):
 
         query = PostgreSQLQuery.update(self.table)
 
-        for i, field_for_update in enumerate(fields_for_update):
-            query.set(field_for_update, getattr(model, field_for_update), getattr(row, field_for_update))
+        for field_for_update in fields_for_update:
+            if to_update := getattr(model, field_for_update):
+                query = query.set(field_for_update, to_update)
 
-        query = query.where(self.table.id == model.id).get_sql()
+        query = query.where(self.table.id == row.id).get_sql()
 
         await self.execute(text(query))
         return await self.read_one(model.id)
