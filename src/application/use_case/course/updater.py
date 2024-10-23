@@ -17,7 +17,7 @@ class CourseUpdaterCase(ICourseUpdaterCase):
     def __init__(self, course_repo: ICourseRepo):
         self.__course_repo = course_repo
 
-    async def __call__(self, data: CourseInUpdate) -> Course:
+    async def __call__(self, data: CourseInUpdateEvent) -> Course:
         course = await self.__course_repo.read_one(data.id)
 
         if not course:
